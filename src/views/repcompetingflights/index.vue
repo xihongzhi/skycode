@@ -1,16 +1,5 @@
 <template>
   <div lass="app-container">
-     <!-- <el-row>
-        <el-col :span="8">
-                  <el-form-item label-width="45px" label="始发机场:" class="postInfo-container-item">
-                     <el-input
-        v-model="condition.dep"
-        style="width: 200px;"
-        class="filter-item"
-      />
-                  </el-form-item>
-                </el-col>
-     </el-row> -->
     <div class="filter-container" style=" margin-top: 10px;">
         <label label-width="45px" class="postInfo-container-item">始发机场:</label>
       <el-input
@@ -54,7 +43,7 @@
         @click="outElsx"
       >导出</el-button>
     </div>
-    <el-table :data="tableData" v-loading="listLoading" style="width: 100%;height:550px">
+    <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
       <el-table-column fixed label="航段" width="150">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
@@ -119,7 +108,6 @@ export default {
   },
   methods: {
     dateFormat: function(row, column) {
-      debugger;
       var t = new Date(row.flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
       return (
         t.getFullYear() +
@@ -197,11 +185,6 @@ export default {
           this.listLoading = false;
           console.log(err);
           this.$message({ message: "获取列表失败", type: "error" });
-          // swal({
-          //   title: "错误",
-          //   text: "获取列表失败",
-          //   timer: 2000
-          // });
         });
     },
 

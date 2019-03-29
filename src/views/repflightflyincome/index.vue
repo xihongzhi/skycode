@@ -32,7 +32,7 @@
       >导出</el-button>
     </div>
     <div class="table-responsive">
-      <el-table :data="tableData" v-loading="listLoading" style="width: 100%;height:550px">
+      <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
         <el-table-column fixed prop="flightNO" label="航班号" width="150"></el-table-column>
         <el-table-column fixed prop="dep" label="始发" width="120"></el-table-column>
         <el-table-column fixed prop="arr" label="目的" width="120"></el-table-column>
@@ -52,7 +52,7 @@
         <el-table-column prop="passagerDistance" label="客公里" width="120"></el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
+            <el-button @click="handleClick(scope)" type="text" size="small">查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,29 +66,46 @@
         @pagination="getList"
       />
     </div>
-    <!-- <repFlightflyIncomeDetail
-      :resetData="resetData"
-      v-if="closeAdd"
-      v-on:closeAdd="closeAdd = false"
-      @setaddSupplierList="setaddSupplierList"
-    />-->
+    <!-- <el-dialog :visible.sync="dialogVisible" title="明细">
+         <div class="table-responsive" height:500px style="overflow-y:scroll;width:100%">
+            <el-table :data="detailtableData" v-loading="listLoading" style="width:100% ;height:550px">
+              <el-table-column fixed prop="flightNo" label="航班号" width="120"></el-table-column>
+              <el-table-column fixed prop="flightDate" label="日期" width="120">
+              </el-table-column>
+              <el-table-column fixed prop="dep" label="始发"  width="120"></el-table-column>
+              <el-table-column fixed prop="arr" label="目的"  width="120"></el-table-column>
+              <el-table-column fixed prop="class" label="舱位" width="120"></el-table-column>
+              <el-table-column fixed prop="flightIncome" label="收入" width="120"></el-table-column>
+              <el-table-column fixed prop="passagerCount" label="人数" width="120"></el-table-column>
+              <el-table-column prop="averagePrice" label="均价" width="120"></el-table-column>
+            </el-table>
+          </div>
+          <div  style="text-align:right;">
+            <pagination
+              v-show="total>0"
+              :total="total"
+              :page.sync="condition.pageIndex"
+              :limit.sync="condition.pageSize"
+              @pagination="getList"
+            />
+          </div>
+    </el-dialog> -->
   </div>
 </template>
 
-<script>
-// import repFlightflyIncomeDetail from "@/views/box/repFlightflyIncomeDetail";
+ <script>
 import Pagination from "@/components/Pagination";
-import { RepFlightflyIncome } from "@/api/ajax.js";
+import { deepClone } from '@/utils'
+import { RepFlightflyIncome,RepFlightflyIncomeDetail } from "@/api/ajax.js";
 export default {
   components: {
     Pagination
-    // repFlightflyIncomeDetail
   },
   data() {
     return {
-      closeAdd: false,
       downloadLoading: false,
       listLoading: false,
+      dialogVisible: false,
       total: 0,
       condition: {
         pageIndex: 1,
@@ -137,7 +154,17 @@ export default {
         "座公里",
         "客公里"
       ],
-      tableData: null
+      tableData: null,
+
+       detailcondition: {
+        flightNo:data,
+        pageIndex: 1,
+        pageSize: 10
+      },
+      detailtableData:null,
+      detailtotal: 0
+
+
     };
   },
   mounted() {
@@ -276,6 +303,36 @@ export default {
       link.click();
       document.body.removeChild(link);
     }
+    // handleClick(scope) {
+    //   // this.dialogType = 'edit'
+    //    this.dialogVisible = true;
+    //   var role= deepClone(scope.row)
+    //   debugger;
+    //    this.getDetailList()
+    //   // this.checkStrictly = true
+    //   // this.role = deepClone(scope.row)
+    //   // this.$nextTick(() => {
+    //   //   const routes = this.generateRoutes(this.role.routes)
+    //   //   this.$refs.tree.setCheckedNodes(this.generateArr(routes))
+    //   //   // set checked state of a node not affects its father and child nodes
+    //   //   this.checkStrictly = false
+    //   // })
+    // },
+    //  getDetailList() {
+    //   this.listLoading = true;
+    //   let t = this;
+    //    RepFlightflyIncomeDetail(t.detailcondition)
+    //     .then(response => {
+    //       this.detailtableData = response.data.data;
+    //       this.detailtotal = response.data.count;
+    //       this.listLoading = false;
+    //     })
+    //     .catch(err => {
+    //       this.listLoading = false;
+    //       console.log(err);
+    //      this.$message({ message: "获取列表失败", type: "error" });
+    //     });
+    // }
   }
 };
 </script>

@@ -41,8 +41,8 @@
 </template>
 <script>
 import Pagination from "@/components/Pagination";
-import {RepFlightflyIncomeDetail} from "@/server/ajax.js";
-import swal from "sweetalert2";
+import {RepFlightflyIncomeDetail} from "@/api/ajax.js";
+
 export default {
   props: ["resetData"],
   components: {
@@ -59,23 +59,6 @@ export default {
         pageSize: 10
       },
       tableData:null
-      // tableData: [
-      //   {
-      //     fkey: null,
-      //     detailID: 1,
-      //     flightNo: "CA1731",
-      //     dep: "HGH",
-      //     arr: "SZX",
-      //     flightIncome: null,
-      //     class: "A",
-      //     averagePrice: 1760,
-      //     flightDate: "2018-05-02T00:00:00",
-      //     passagerCount: null,
-      //     timestamp: "2018-05-03T11:54:58",
-      //     skey: "",
-      //     addtime: "2019-03-15T08:47:10+08:00"
-      //   }
-      // ]
     };
   },
   mounted() {
@@ -94,11 +77,7 @@ export default {
         .catch(err => {
           this.listLoading = false;
           console.log(err);
-          swal({
-            title: "错误",
-            text: "获取列表失败",
-            timer: 2000
-          });
+         this.$message({ message: "获取列表失败", type: "error" });
         });
     }
   }

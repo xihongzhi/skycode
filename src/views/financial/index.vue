@@ -35,7 +35,7 @@
       >导出</el-button>
       </el-row>
     </div>
-    <el-table :data="tableData" v-loading="listLoading" style="width: 100%;height:550px">
+    <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
       <el-table-column fixed prop="futureID" label="序号" width="120"></el-table-column>
       <el-table-column fixed prop="flightDate" label="日期" width="150">
         <template slot-scope="scope">{{scope.row.flightDate}}|parseTime('{y}-{m}-{d}')</template>
