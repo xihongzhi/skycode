@@ -126,21 +126,7 @@ export const constantRoutes = [
         meta: { title: 'documentation', icon: 'documentation', affix: true }
       }
     ]
-  },
-  // },
-  // {
-  //   path: '/guide',
-  //   component: Layout,
-  //   redirect: '/guide/index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/guide/index'),
-  //       name: 'Guide',
-  //       meta: { title: 'guide', icon: 'guide', noCache: true }
-  //     }
-  //   ]
-  // }
+  }
 ]
 
 export default new Router({
@@ -190,19 +176,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
-  // {
-  //   path: '/icon',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/svg-icons/index'),
-  //       name: 'Icons',
-  //       meta: { title: 'icons', icon: 'icon', noCache: true }
-  //     }
-  //   ]
-  // },
 
   /** When your routing table is too long, you can split it into small modules**/
   componentsRouter,

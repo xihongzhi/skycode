@@ -233,9 +233,9 @@ export default {
           "d6",
           "d7",
           "dOut",
-          "lowestPrice",
-          "lowestPriceChange",
-          "passagerNumber"
+          "CTRIP",
+          "价格变化",
+          "人数"
         ];
         const filterVal = [
           "aim",
@@ -262,7 +262,8 @@ export default {
           multiHeader,
           header,
           merges,
-          data
+          data,
+          filename: "竞飞航班上客速度"
         });
         this.downloadLoading = false;
       });

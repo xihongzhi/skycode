@@ -34,8 +34,12 @@
         <el-table-column fixed prop="flightNO" label="航班号" width="150"></el-table-column>
         <el-table-column fixed prop="dep" label="始发" width="120"></el-table-column>
         <el-table-column fixed prop="arr" label="目的" width="120"></el-table-column>
-        <el-table-column fixed prop="flightDate" label="旅行日期" :formatter="dateFormat" width="120"></el-table-column>
-        <el-table-column fixed prop="flightDate" label="起飞时间" :formatter="timeFormat" width="120"></el-table-column>
+      <el-table-column fixed  label="旅行日期"  width="120">
+           <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
+      </el-table-column>
+      <el-table-column fixed  label="起飞时间"  width="120">
+           <template slot-scope="scope">{{timeFormat(scope.row.flightDate)}}</template>
+      </el-table-column>
         <el-table-column prop="flightstyle" label="机型" width="120"></el-table-column>
         <el-table-column prop="flightTime" label="飞行时间" width="120"></el-table-column>
         <el-table-column prop="flightDistance" label="公里数" width="120"></el-table-column>
@@ -105,47 +109,7 @@ export default {
         flightNo: "",
         flightDate: new Date()
       },
-
-      filterData: [
-        "flightNO",
-        "dep",
-        "arr",
-        "flightDate",
-        "depTime",
-        "flightstyle",
-        "flightTime",
-        "flightDistance",
-        "passagerCount",
-        "layoutNumber",
-        "flightIncome",
-        "crowdRate",
-        "everyTimeIncome",
-        "everyPassagerDistanceIncome",
-        "everyLayoutDistanceIncome",
-        "layoutDistance",
-        "passagerDistance"
-      ],
-      tableTitle: [
-        "航班号",
-        "始发",
-        "目的",
-        "旅行时间",
-        "起飞时间",
-        "机型",
-        "飞行时间",
-        "公里数",
-        "乘客人数",
-        "布局数",
-        "航班收入",
-        "客座率",
-        "小时收入",
-        "客公里收入",
-        "座公里收入",
-        "座公里",
-        "客公里"
-      ],
       tableData: null,
-
        detailcondition: {
         flightNo:''
       },
@@ -156,18 +120,18 @@ export default {
     this.getList();
   },
   methods: {
-     dateFormat: function(row, column) {
-      var t = new Date(row.flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
-      return (
-        t.getFullYear() +
-        "-" +
-        (t.getMonth() + 1) +
-        "-" +
-        t.getDate() 
-      );
+     dateFormat:function(flightDate){
+      var t = new Date(flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
+            return (
+              t.getFullYear() +
+              "-" +
+              (t.getMonth() + 1) +
+              "-" +
+              t.getDate() 
+            );
     },
-     timeFormat: function(row, column) {
-      var t = new Date(row.flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
+     timeFormat: function(column) {
+      var t = new Date(column); //row 表示一行数据, updateTime 表示要格式化的字段名称
       return (
         t.getHours()+
         ":"+ 
@@ -241,81 +205,44 @@ export default {
     },
     outElsx() {
       this.downloadLoading = true;
-      let jsonData = this.tableData,
-        t = this;
-      let str = `${this.tableTitle.join()}\n`;
-      for (let i = 0; i < jsonData.length; i++) {
-        let a = jsonData[i];
-        this.filterData.each(b => {
-          if (a.hasOwnProperty(b)) {
-            if (b == "flightNO")
-              return (str += `${!a.flightNO ? "" : a.flightNO},`);
-            if (b == "dep") return (str += `${!a.dep ? "" : a.dep},`);
-            if (b == "arr") return (str += `${!a.arr ? "" : a.arr},`);
-            if (b == "flightDate")
-              return (str += `${!a.flightDate ? "" : a.flightDate},`);
-            if (b == "depTime")
-              return (str += `${!a.depTime ? "" : a.depTime},`);
-            if (b == "flightstyle")
-              return (str += `${!a.flightstyle ? "" : a.flightstyle},`);
-            if (b == "flightTime")
-              return (str += `${!a.flightTime ? "" : a.flightTime},`);
-            if (b == "flightDistance")
-              return (str += `${!a.flightDistance ? "" : a.flightDistance},`);
-            if (b == "passagerCount")
-              return (str += `${!a.passagerCount ? "" : a.passagerCount},`);
-            if (b == "layoutNumber")
-              return (str += `${!a.layoutNumber ? "" : a.layoutNumber},`);
-            if (b == "flightIncome")
-              return (str += `${!a.flightIncome ? "" : a.flightIncome},`);
-            if (b == "crowdRate")
-              return (str += `${!a.crowdRate ? "" : a.crowdRate},`);
-            if (b == "everyTimeIncome")
-              return (str += `${!a.everyTimeIncome ? "" : a.everyTimeIncome},`);
-            if (b == "everyPassagerDistanceIncome")
-              return (str += `${
-                !a.everyPassagerDistanceIncome
-                  ? ""
-                  : a.everyPassagerDistanceIncome
-              },`);
-            if (b == "everyLayoutDistanceIncome")
-              return (str += `${
-                !a.everyLayoutDistanceIncome ? "" : a.everyLayoutDistanceIncome
-              },`);
-            if (b == "layoutDistance")
-              return (str += `${!a.layoutDistance ? "" : a.layoutDistance},`);
-            if (b == "passagerDistance")
-              return (str += `${
-                !a.passagerDistance ? "" : a.passagerDistance
-              },`);
-            str += `${a[b] ? a[b] : ""},`;
+      let table = [];
+      this.tableData.forEach(element => {
+        if(element.flightDate){
+          element.flightDate=this.dateFormat(element.flightDate);
+          element.depTime=this.timeFormat(element.flightDate);
+        }
+        table.push(element);
+      });
+        import('@/vendor/Export2Excel').then(excel => {
+        const tHeader= ["航班号","始发", "目的","旅行时间","起飞时间","机型","飞行时间","公里数","乘客人数","布局数","航班收入","客座率","小时收入","客公里收入","座公里收入","座公里","客公里"]
+        const filterVal = ["flightNO","dep","arr","flightDate","depTime","flightstyle","flightTime","flightDistance","passagerCount","layoutNumber","flightIncome","crowdRate","everyTimeIncome","everyPassagerDistanceIncome","everyLayoutDistanceIncome","layoutDistance","passagerDistance"
+      ]
+        const list = table
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "1天承运航班收入",
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
           }
-        });
-        str += "\n";
-      }
-      this.downloadLoading = true;
-      let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(str);
-      var link = document.createElement("a");
-      link.href = uri;
-      link.download = "-1天承运航班收入.csv";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        })
+      );
     },
     handleClick(scope) {
        this.dialogVisible = true;
        let row= deepClone(scope.row);
        this.detailcondition.flightNo=row.flightNo;
-
        this.getDetailList();
-      // this.checkStrictly = true
-      // this.role = deepClone(scope.row)
-      // this.$nextTick(() => {
-      //   const routes = this.generateRoutes(this.role.routes)
-      //   this.$refs.tree.setCheckedNodes(this.generateArr(routes))
-      //   // set checked state of a node not affects its father and child nodes
-      //   this.checkStrictly = false
-      // })
     },
      getDetailList() {
        let t=this;
@@ -325,10 +252,8 @@ export default {
         .then(response => {
           this.detailtableData = response.data.data;
           this.detailtotal = response.data.count;
-         // this.detaillistLoading = false;
         })
         .catch(err => {
-        //  this.detaillistLoading = false;
           console.log(err);
          this.$message({ message: "获取列表失败", type: "error" });
         });

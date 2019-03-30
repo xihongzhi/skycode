@@ -36,14 +36,17 @@
     <!-- align="center" -->
        <!-- <el-table-column fixed label="日期" width="130" prop="flightDate" :formatter="dateFormat" > -->
     <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
-      <el-table-column fixed prop="futureID" label="序号" width="130"></el-table-column>
+      <el-table-column fixed prop="futureID" label="序号" width="100"></el-table-column>
       <el-table-column fixed label="日期" width="130"  >
          <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
       <el-table-column fixed label="航段" width="150">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed prop="depTime" label="起飞时间" :formatter="timeFormat" width="130"></el-table-column>
+      <el-table-column fixed  label="起飞时间"  width="130">
+           <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
+      </el-table-column>
+
       <el-table-column fixed prop="flightNo" label="航班号" width="130"></el-table-column>
       <el-table-column fixed prop="layout" label="布局" width="130"></el-table-column>
       <el-table-column prop="lowestPrice" label="价格" width="130"></el-table-column>
@@ -67,6 +70,7 @@
 import Pagination from "@/components/Pagination";
 import { RepFutureFlightSell } from "@/api/ajax.js";
 import { parseTime } from "@/utils";
+import { timeout } from 'q';
 export default {
   components: {
     Pagination
@@ -84,33 +88,6 @@ export default {
         arr: "",
         flightNo: ""
       },
-
-      tableTitle: [
-        "编号",
-        "日期",
-        "航班",
-        "起飞时间",
-        "航班号",
-        "布局",
-        "价格",
-        "价格变化",
-        "客座率",
-        "上客速递",
-        "入库日期"
-      ],
-      filterData: [
-        "futureID",
-        "flightDate",
-        "dep",
-        "depTime",
-        "flightNo",
-        "layout",
-        "lowestPrice",
-        "lowestPriceChange",
-        "crowRate",
-        "passengerChange",
-        "addTime"
-      ],
       tableData: null
     };
   },
@@ -139,8 +116,16 @@ export default {
     //     t.getDate() 
     //   );
     // },
-    timeFormat: function(row, column) {
-      var t = new Date(row.depTime); //row 表示一行数据, updateTime 表示要格式化的字段名称
+    // timeFormat: function(row, column) {
+    //   var t = new Date(row.depTime); //row 表示一行数据, updateTime 表示要格式化的字段名称
+    //   return (
+    //     t.getHours()+
+    //     ":"+ 
+    //     t.getMinutes()
+    //   );
+    // },
+     timeFormat: function(column) {
+      var t = new Date(column); //row 表示一行数据, updateTime 表示要格式化的字段名称
       return (
         t.getHours()+
         ":"+ 
@@ -196,7 +181,6 @@ export default {
       let t = this,
         o = t.condition;
       if (t.time && t.time.length) {
-        debugger;
        o["startFlightDate"] = this.formatDate(t["time"][0], "yyyy-MM-dd");
        o["endFlightDate"] = this.formatDate(t["time"][1], "yyyy-MM-dd");
       }
@@ -215,60 +199,44 @@ export default {
 
     outElsx() {
       this.downloadLoading = true;
-      let jsonData = this.tableData,
-        t = this;
-      let str = `${this.tableTitle.join()}\n`;
-      for (let i = 0; i < jsonData.length; i++) {
-        let a = jsonData[i];
-        this.filterData.each(b => {
-          if (a.hasOwnProperty(b)) {
-            if (b == "futureID")
-              return (str += `${!a.futureID ? "" : a.futureID},`);
-            if (b == "flightDate")
-              return (str += `${!a.flightDate ? "" : a.flightDate},`);
-            if (b == "dep")
-              return (str += `${!a.dep ? "" : a.dep + "-" + a.arr},`);
-            if (b == "depTime")
-              return (str += `${!a.depTime ? "" : a.depTime},`);
-            if (b == "flightNo")
-              return (str += `${!a.flightNo ? "" : a.flightNo},`);
-            if (b == "layout") return (str += `${!a.layout ? "" : a.layout},`);
-            if (b == "lowestPrice")
-              return (str += `${!a.lowestPrice ? "" : a.lowestPrice},`);
-            if (b == "lowestPriceChange")
-              return (str += `${
-                !a.lowestPriceChange ? "" : a.lowestPriceChange
-              },`);
-            if (b == "crowRate")
-              return (str += `${!a.crowRate ? "" : a.crowRate},`);
-            if (b == "passengerChange")
-              return (str += `${!a.passengerChange ? "" : a.passengerChange},`);
-            if (b == "addTime")
-              return (str += `${!a.addTime ? "" : a.addTime},`);
-            str += `${a[b] ? a[b] : ""},`;
-          }
-        });
-        str += "\n";
-      }
-      this.downloadLoading = false;
-      let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(str);
-      var link = document.createElement("a");
-      link.href = uri;
-      link.download = "未来航班销售监控.csv";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      // import("@/vendor/Export2Excel").then(excel => {
-      //   const data = this.formatJson(filterData, jsonData);
-      //   excel.export_json_to_excel({
-      //     header: this.tableTitle,
-      //     data,
-      //     filename: "table-list"
-      //   });
-      //   this.downloadLoading = false;
-      // });
+      let table = [];
+      this.tableData.forEach(element => {
+        element.aim = element.dep + "-" + element.arr;
+        if(element.flightDate){
+          element.flightDate=this.dateFormat(element.flightDate);
+        }
+        if(element.depTime){
+          element.depTime=this.timeFormat(element.depTime);
+        }
+        table.push(element);
+      });
+    import('@/vendor/Export2Excel').then(excel => {
+        const tHeader =["编号","日期","航段","起飞时间","航班号","布局","价格","价格变化","客座率","上客速递","入库日期"]
+        const filterVal =["futureID","flightDate","aim","depTime","flightNo","layout","lowestPrice","lowestPriceChange","crowRate","passengerChange","addTime"]
+        const list = table
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "未来航班销售监控",
+          // autoWidth: this.autoWidth,
+          // bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
     },
-
+    formatJson(filterVal, jsonData) {
+      debugger;
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
     formatDate(time, fmt) {
     let date = time ? (Number(time) && new Date(time) || time) : new Date();
     if (/(y+)/.test(fmt)) {
@@ -293,36 +261,9 @@ export default {
    padLeftZero(str) {
     return ('00' + str).substr(str.length);
   }
-
-    // formatJson(filterVal, jsonData) {
-    //   return jsonData.map(v =>
-    //     filterVal.map(j => {
-    //       if (j === "timestamp") {
-    //         return parseTime(v[j]);
-    //       } else {
-    //         return v[j];
-    //       }
-    //     })
-    //   );
-    // }
   },
 };
 </script>
 <style scoped>
-.btn-group {
-  border-radius: 8px;
-}
-.search_r {
-  margin-right: 78px;
-  position: absolute;
-  right: 0;
-}
-.table {
-  text-align: center;
-}
-.table_bg {
-  background: rgba(235, 235, 235, 1);
-  border-radius: 3px 3px 0px 0px;
-}
 </style>
 
