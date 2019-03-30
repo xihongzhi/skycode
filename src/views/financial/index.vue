@@ -19,14 +19,12 @@
           :default-time="['00:00:00', '23:59:59']"
         ></el-date-picker>
          <el-button
-        v-waves
         class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="getList"
       >查询</el-button>
       <el-button
-        v-waves
         :loading="downloadLoading"
         class="filter-item"
         type="primary"
@@ -35,22 +33,24 @@
       >导出</el-button>
       </el-row>
     </div>
+    <!-- align="center" -->
+       <!-- <el-table-column fixed label="日期" width="130" prop="flightDate" :formatter="dateFormat" > -->
     <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
-      <el-table-column fixed prop="futureID" label="序号" width="120"></el-table-column>
-      <el-table-column fixed prop="flightDate" label="日期" width="150">
-        <template slot-scope="scope">{{scope.row.flightDate}}|parseTime('{y}-{m}-{d}')</template>
+      <el-table-column fixed prop="futureID" label="序号" width="130"></el-table-column>
+      <el-table-column fixed label="日期" width="130"  >
+         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
       <el-table-column fixed label="航段" width="150">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed prop="depTime" label="起飞时间" width="120"></el-table-column>
-      <el-table-column fixed prop="flightNo" label="航班号" width="120"></el-table-column>
-      <el-table-column fixed prop="layout" label="布局" width="120"></el-table-column>
-      <el-table-column prop="lowestPrice" label="价格" width="120"></el-table-column>
-      <el-table-column prop="lowestPriceChange" label="价格变化" width="120"></el-table-column>
-      <el-table-column prop="crowRate" label="客座率" width="120"></el-table-column>
-      <el-table-column prop="passengerChange" label="上客速递" width="120"></el-table-column>
-      <el-table-column prop="addTime" label="入库日期" width="120"></el-table-column>
+      <el-table-column fixed prop="depTime" label="起飞时间" :formatter="timeFormat" width="130"></el-table-column>
+      <el-table-column fixed prop="flightNo" label="航班号" width="130"></el-table-column>
+      <el-table-column fixed prop="layout" label="布局" width="130"></el-table-column>
+      <el-table-column prop="lowestPrice" label="价格" width="130"></el-table-column>
+      <el-table-column prop="lowestPriceChange" label="价格变化" width="130"></el-table-column>
+      <el-table-column prop="crowRate" label="客座率" width="130"></el-table-column>
+      <el-table-column prop="passengerChange" label="上客速递" width="130"></el-table-column>
+      <el-table-column prop="addTime" label="入库日期" width="auto"></el-table-column>
     </el-table>
     <div class="VueTables__search-field ml-auto" style="float: right;">
       <pagination
@@ -118,6 +118,35 @@ export default {
     this.getList();
   },
   methods: {
+    dateFormat:function(flightDate){
+      var t = new Date(flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
+            return (
+              t.getFullYear() +
+              "-" +
+              (t.getMonth() + 1) +
+              "-" +
+              t.getDate() 
+            );
+    },
+
+    // dateFormat: function(row, column) {
+    //   var t = new Date(row.flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
+    //   return (
+    //     t.getFullYear() +
+    //     "-" +
+    //     (t.getMonth() + 1) +
+    //     "-" +
+    //     t.getDate() 
+    //   );
+    // },
+    timeFormat: function(row, column) {
+      var t = new Date(row.depTime); //row 表示一行数据, updateTime 表示要格式化的字段名称
+      return (
+        t.getHours()+
+        ":"+ 
+        t.getMinutes()
+      );
+    },
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
@@ -166,10 +195,11 @@ export default {
       this.listLoading = true;
       let t = this,
         o = t.condition;
-      // if (t.time && t.time.length) {
-      //   o["startFlightDate"] = t.$$.formatDate(t["time"][0], "yyyy-MM-dd");
-      //   o["endFlightDate"] = t.$$.formatDate(t["time"][1], "yyyy-MM-dd");
-      // }
+      if (t.time && t.time.length) {
+        debugger;
+       o["startFlightDate"] = this.formatDate(t["time"][0], "yyyy-MM-dd");
+       o["endFlightDate"] = this.formatDate(t["time"][1], "yyyy-MM-dd");
+      }
       RepFutureFlightSell(o)
         .then(response => {
           this.tableData = response.data.data;
@@ -237,7 +267,33 @@ export default {
       //   });
       //   this.downloadLoading = false;
       // });
+    },
+
+    formatDate(time, fmt) {
+    let date = time ? (Number(time) && new Date(time) || time) : new Date();
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
     }
+    let o = {
+      'Y+': date.getFullYear(),
+      'M+': date.getMonth() + 1,
+      'd+': date.getDate(),
+      'h+': date.getHours(),
+      'm+': date.getMinutes(),
+      's+': date.getSeconds()
+    };
+    for (let k in o) {
+      if (new RegExp(`(${k})`).test(fmt)) {
+        let str = o[k] + '';
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : this.padLeftZero(str));
+      }
+    }
+    return fmt;
+  },
+   padLeftZero(str) {
+    return ('00' + str).substr(str.length);
+  }
+
     // formatJson(filterVal, jsonData) {
     //   return jsonData.map(v =>
     //     filterVal.map(j => {
@@ -249,7 +305,7 @@ export default {
     //     })
     //   );
     // }
-  }
+  },
 };
 </script>
 <style scoped>

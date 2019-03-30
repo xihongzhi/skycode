@@ -28,14 +28,12 @@
         placeholder="选择日期"
       ></el-date-picker>
       <el-button
-        v-waves
         class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="getList"
       >查询</el-button>
       <el-button
-        v-waves
         :loading="downloadLoading"
         class="filter-item"
         type="primary"
@@ -47,13 +45,13 @@
       <el-table-column fixed label="航段" width="150">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed label="起飞时间" width="120" prop="flightDate" :formatter="dateFormat"></el-table-column>
+      <el-table-column fixed label="起飞时间" width="120" prop="flightDate" :formatter="timeFormat"></el-table-column>
       <el-table-column fixed prop="flightNO" label="航班号" width="120"></el-table-column>
-      <el-table-column fixed prop="layout" label="布局" width="300"></el-table-column>
+      <el-table-column fixed prop="layout" label="布局" width="120"></el-table-column>
       <el-table-column label="上客速度">
         <el-table-column prop="d0" label="0" width="120"></el-table-column>
         <el-table-column prop="d1" label="1" width="120"></el-table-column>
-        <el-table-column prop="d2" label="2" width="300"></el-table-column>
+        <el-table-column prop="d2" label="2" width="120"></el-table-column>
         <el-table-column prop="d3" label="3" width="120"></el-table-column>
         <el-table-column prop="d4" label="4" width="120"></el-table-column>
         <el-table-column prop="d5" label="5" width="120"></el-table-column>
@@ -114,9 +112,15 @@ export default {
         "-" +
         (t.getMonth() + 1) +
         "-" +
-        t.getDate() +
-        " " +
-        t.getHours()
+        t.getDate() 
+      );
+    },
+     timeFormat: function(row, column) {
+      var t = new Date(row.flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
+      return (
+        t.getHours()+
+        ":"+ 
+        t.getMinutes()
       );
     },
     validate() {
@@ -161,7 +165,6 @@ export default {
           }
         } else {
           if (!reg2.test(this.condition.flightNo.toUpperCase())) {
-            //swal({ title: "提示", text: "航班号必须为六位字符" });
             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }

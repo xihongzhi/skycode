@@ -87,7 +87,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/financial/index'),
         name: '未来航班销售监控',
-        meta: { title: '未来航班销售监控', icon: 'link', affix: true }
+        meta: { title: '未来航班销售监控', icon: 'link' }
       }
     ]
   },
@@ -99,7 +99,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/repcompetingflights/index'),
         name: '竞飞航班上客速度',
-        meta: { title: '竞飞航班上客速度', icon: 'tab', affix: true }
+        meta: { title: '竞飞航班上客速度', icon: 'tab'}
       }
     ]
   },
@@ -111,7 +111,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/repflightflyincome/index'),
         name: '-1天承运航班收入',
-        meta: { title: '-1天承运航班收入', icon: 'guide', affix: true }
+        meta: { title: '-1天承运航班收入', icon: 'guide'}
       }
     ]
   },
