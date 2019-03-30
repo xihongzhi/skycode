@@ -1,5 +1,5 @@
 <template>
-  <div lass="app-container">
+  <div class="app-container">
     <div class="filter-container" style=" margin-top: 10px;">
       <el-row>
         <label label-width="45px" class="postInfo-container-item">始发机场:</label>
@@ -33,27 +33,25 @@
       >导出</el-button>
       </el-row>
     </div>
-    <!-- align="center" -->
-       <!-- <el-table-column fixed label="日期" width="130" prop="flightDate" :formatter="dateFormat" > -->
-    <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
-      <el-table-column fixed prop="futureID" label="序号" width="100"></el-table-column>
-      <el-table-column fixed label="日期" width="130"  >
+    <el-table :data="tableData" v-loading="listLoading"  border fit highlight-current-row height="580px" style="width: 100%">
+      <el-table-column fixed prop="futureID"  align="center" label="序号" width="100"></el-table-column>
+      <el-table-column fixed  align="center" label="日期" width="130"  >
          <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
-      <el-table-column fixed label="航段" width="150">
+      <el-table-column fixed  align="center" label="航段" width="150">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed  label="起飞时间"  width="130">
+      <el-table-column fixed  align="center" label="起飞时间"  width="130">
            <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
       </el-table-column>
 
-      <el-table-column fixed prop="flightNo" label="航班号" width="130"></el-table-column>
-      <el-table-column fixed prop="layout" label="布局" width="130"></el-table-column>
-      <el-table-column prop="lowestPrice" label="价格" width="130"></el-table-column>
-      <el-table-column prop="lowestPriceChange" label="价格变化" width="130"></el-table-column>
-      <el-table-column prop="crowRate" label="客座率" width="130"></el-table-column>
-      <el-table-column prop="passengerChange" label="上客速递" width="130"></el-table-column>
-      <el-table-column prop="addTime" label="入库日期" width="auto"></el-table-column>
+      <el-table-column fixed prop="flightNo"  align="center" label="航班号" width="130"></el-table-column>
+      <el-table-column fixed prop="layout"  align="center" label="布局" width="130"></el-table-column>
+      <el-table-column prop="lowestPrice" align="center" label="价格" width="130"></el-table-column>
+      <el-table-column prop="lowestPriceChange" align="center" label="价格变化" width="130"></el-table-column>
+      <el-table-column prop="crowRate"  align="center" label="客座率" width="130"></el-table-column>
+      <el-table-column prop="passengerChange"  align="center" label="上客速递" width="130"></el-table-column>
+      <el-table-column prop="addTime"   align="center" label="入库日期" width="auto"></el-table-column>
     </el-table>
     <div class="VueTables__search-field ml-auto" style="float: right;">
       <pagination
@@ -264,6 +262,24 @@ export default {
   },
 };
 </script>
+<style>
+.sortable-ghost{
+  opacity: .8;
+  color: #fff!important;
+  background: #42b983!important;
+}
+</style>
 <style scoped>
+.icon-star{
+  margin-right:2px;
+}
+.drag-handler{
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.show-d{
+  margin-top: 15px;
+}
 </style>
 

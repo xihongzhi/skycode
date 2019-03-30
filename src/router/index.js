@@ -181,7 +181,7 @@ export const asyncRoutes = [
   // componentsRouter,
   // chartsRouter,
   // nestedRouter,
-  // tableRouter,
+   tableRouter,
   // treeTableRouter,
 
   // {

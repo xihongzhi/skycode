@@ -1,5 +1,5 @@
 <template>
-  <div lass="app-container">
+  <div class="app-container">
     <div class="filter-container" style=" margin-top: 10px;">
       <label label-width="45px" class="postInfo-container-item">始发城市:</label>
       <el-input v-model="condition.dep" style="width: 200px;" class="filter-item"/>
@@ -30,28 +30,28 @@
       >导出</el-button>
     </div>
     <div class="table-responsive">
-      <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
-        <el-table-column fixed prop="flightNO" label="航班号" width="150"></el-table-column>
-        <el-table-column fixed prop="dep" label="始发" width="120"></el-table-column>
-        <el-table-column fixed prop="arr" label="目的" width="120"></el-table-column>
-      <el-table-column fixed  label="旅行日期"  width="120">
+      <el-table :data="tableData" v-loading="listLoading"  border fit highlight-current-row  height="580px" style="width: 100%">
+        <el-table-column fixed prop="flightNO"  align="center" label="航班号" width="150"></el-table-column>
+        <el-table-column fixed prop="dep"  align="center" label="始发" width="120"></el-table-column>
+        <el-table-column fixed prop="arr"  align="center" label="目的" width="120"></el-table-column>
+      <el-table-column fixed  label="旅行日期"   align="center" width="120">
            <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
-      <el-table-column fixed  label="起飞时间"  width="120">
+      <el-table-column fixed   align="center" label="起飞时间"  width="120">
            <template slot-scope="scope">{{timeFormat(scope.row.flightDate)}}</template>
       </el-table-column>
-        <el-table-column prop="flightstyle" label="机型" width="120"></el-table-column>
-        <el-table-column prop="flightTime" label="飞行时间" width="120"></el-table-column>
-        <el-table-column prop="flightDistance" label="公里数" width="120"></el-table-column>
-        <el-table-column prop="passagerCount" label="乘客人数" width="120"></el-table-column>
-        <el-table-column prop="layoutNumber" label="布局数" width="120"></el-table-column>
-        <el-table-column prop="flightIncome" label="航班收入" width="120"></el-table-column>
-        <el-table-column prop="crowdRate" label="客座率" width="120"></el-table-column>
-        <el-table-column prop="everyTimeIncome" label="小时收入" width="120"></el-table-column>
-        <el-table-column prop="everyPassagerDistanceIncome" label="客公里收入" width="120"></el-table-column>
-        <el-table-column prop="everyLayoutDistanceIncome" label="座公里收入" width="120"></el-table-column>
-        <el-table-column prop="layoutDistance" label="座公里" width="120"></el-table-column>
-        <el-table-column prop="passagerDistance" label="客公里" width="120"></el-table-column>
+        <el-table-column prop="flightstyle"  align="center" label="机型" width="120"></el-table-column>
+        <el-table-column prop="flightTime"  align="center" label="飞行时间" width="120"></el-table-column>
+        <el-table-column prop="flightDistance"  align="center" label="公里数" width="120"></el-table-column>
+        <el-table-column prop="passagerCount"  align="center" label="乘客人数" width="120"></el-table-column>
+        <el-table-column prop="layoutNumber"  align="center" label="布局数" width="120"></el-table-column>
+        <el-table-column prop="flightIncome"  align="center" label="航班收入" width="120"></el-table-column>
+        <el-table-column prop="crowdRate"  align="center" label="客座率" width="120"></el-table-column>
+        <el-table-column prop="everyTimeIncome"  align="center" label="小时收入" width="120"></el-table-column>
+        <el-table-column prop="everyPassagerDistanceIncome"  align="center" label="客公里收入" width="120"></el-table-column>
+        <el-table-column prop="everyLayoutDistanceIncome"  align="center" label="座公里收入" width="120"></el-table-column>
+        <el-table-column prop="layoutDistance"  align="center" label="座公里" width="120"></el-table-column>
+        <el-table-column prop="passagerDistance"  align="center" label="客公里" width="120"></el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope)" type="text" size="small">查看详情</el-button>

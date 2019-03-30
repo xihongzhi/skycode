@@ -1,5 +1,5 @@
 <template>
-  <div lass="app-container">
+  <div class="app-container">
     <div class="filter-container" style=" margin-top: 10px;">
         <label label-width="45px" class="postInfo-container-item">始发机场:</label>
       <el-input
@@ -41,28 +41,28 @@
         @click="outElsx"
       >导出</el-button>
     </div>
-    <el-table :data="tableData" v-loading="listLoading" height="580px" style="width: 100%">
-      <el-table-column fixed label="航段" width="150">
+    <el-table :data="tableData" v-loading="listLoading"  border fit highlight-current-row  height="580px" style="width: 100%">
+      <el-table-column fixed align="center" label="航段" width="150">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed label="起飞时间" width="120" prop="flightDate" :formatter="timeFormat"></el-table-column>
-      <el-table-column fixed prop="flightNO" label="航班号" width="120"></el-table-column>
-      <el-table-column fixed prop="layout" label="布局" width="120"></el-table-column>
-      <el-table-column label="上客速度">
-        <el-table-column prop="d0" label="0" width="120"></el-table-column>
-        <el-table-column prop="d1" label="1" width="120"></el-table-column>
-        <el-table-column prop="d2" label="2" width="120"></el-table-column>
-        <el-table-column prop="d3" label="3" width="120"></el-table-column>
-        <el-table-column prop="d4" label="4" width="120"></el-table-column>
-        <el-table-column prop="d5" label="5" width="120"></el-table-column>
-        <el-table-column prop="d6" label="6" width="120"></el-table-column>
-        <el-table-column prop="d7" label="7" width="120"></el-table-column>
-        <el-table-column prop="dOut" label="7+" width="120"></el-table-column>
+      <el-table-column fixed align="center"  label="起飞时间" width="120" prop="flightDate" :formatter="timeFormat"></el-table-column>
+      <el-table-column fixed prop="flightNO"  align="center" label="航班号" width="120"></el-table-column>
+      <el-table-column fixed prop="layout"   align="center" label="布局" width="120"></el-table-column>
+      <el-table-column  align="center" label="上客速度">
+        <el-table-column prop="d0"  align="center" label="0" width="120"></el-table-column>
+        <el-table-column prop="d1"  align="center" label="1" width="120"></el-table-column>
+        <el-table-column prop="d2"  align="center" label="2" width="120"></el-table-column>
+        <el-table-column prop="d3"  align="center" label="3" width="120"></el-table-column>
+        <el-table-column prop="d4"  align="center" label="4" width="120"></el-table-column>
+        <el-table-column prop="d5"  align="center" label="5" width="120"></el-table-column>
+        <el-table-column prop="d6"  align="center" label="6" width="120"></el-table-column>
+        <el-table-column prop="d7"  align="center" label="7" width="120"></el-table-column>
+        <el-table-column prop="dOut"  align="center" label="7+" width="120"></el-table-column>
       </el-table-column>
-      <el-table-column :label="this.condition.flightDate">
-        <el-table-column prop="lowestPrice" label="CTRIP" width="120"></el-table-column>
-        <el-table-column prop="lowestPriceChange" label="价格变化" width="120"></el-table-column>
-        <el-table-column prop="passagerNumber" label="人数" width="120"></el-table-column>
+      <el-table-column :label="this.condition.flightDate"  align="center">
+        <el-table-column prop="lowestPrice"  align="center" label="CTRIP" width="120"></el-table-column>
+        <el-table-column prop="lowestPriceChange"  align="center"  label="价格变化" width="120"></el-table-column>
+        <el-table-column prop="passagerNumber"  align="center" label="人数" width="120"></el-table-column>
       </el-table-column>
     </el-table>
     <div class="VueTables__search-field ml-auto" style="float: right;">
