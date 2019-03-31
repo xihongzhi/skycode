@@ -79,18 +79,7 @@ export const constantRoutes = [
     ]
   },
   
-  {
-    path: '/financial',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/financial/index'),
-        name: '未来航班销售监控',
-        meta: { title: '未来航班销售监控', icon: 'link' }
-      }
-    ]
-  },
+
   {
     path: '/repcompeting',
     component: Layout,
@@ -100,6 +89,18 @@ export const constantRoutes = [
         component: () => import('@/views/repcompetingflights/index'),
         name: '竞飞航班上客速度',
         meta: { title: '竞飞航班上客速度', icon: 'tab'}
+      }
+    ]
+  },
+  {
+    path: '/financial',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/financial/index'),
+        name: '未来航班销售监控',
+        meta: { title: '未来航班销售监控', icon: 'link' }
       }
     ]
   },

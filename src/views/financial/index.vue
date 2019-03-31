@@ -38,7 +38,7 @@
       height="580px"
       style="width: 100%"
     >
-      <el-table-column fixed prop="futureID" align="center" label="序号" width="100"></el-table-column>
+      <!-- <el-table-column fixed prop="futureID" align="center" label="序号" width="100"></el-table-column> -->
       <el-table-column fixed align="center" label="日期" width="130">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
@@ -54,8 +54,8 @@
       <el-table-column prop="lowestPrice" align="center" label="价格" width="130"></el-table-column>
       <el-table-column prop="lowestPriceChange" align="center" label="价格变化" width="130"></el-table-column>
       <el-table-column prop="crowRate" align="center" label="客座率" width="130"></el-table-column>
-      <el-table-column prop="passengerChange" align="center" label="上客速递" width="130"></el-table-column>
-      <el-table-column prop="addTime" align="center" label="入库日期" width="auto"></el-table-column>
+      <el-table-column prop="passengerChange" align="center" label="上客速度" width="130"></el-table-column>
+      <el-table-column prop="addTime" align="center" label="入库日期" width="260"></el-table-column>
         <div slot="empty">
           <p>
             <label/>
@@ -76,8 +76,6 @@
 <script>
 import Pagination from "@/components/Pagination";
 import { RepFutureFlightSell } from "@/api/ajax.js";
-import { parseTime } from "@/utils";
-import { timeout } from "q";
 export default {
   components: {
     Pagination
@@ -215,7 +213,6 @@ export default {
       });
       import("@/vendor/Export2Excel").then(excel => {
         const tHeader = [
-          "编号",
           "日期",
           "航段",
           "起飞时间",
@@ -228,7 +225,6 @@ export default {
           "入库日期"
         ];
         const filterVal = [
-          "futureID",
           "flightDate",
           "aim",
           "depTime",
@@ -256,11 +252,7 @@ export default {
       debugger;
       return jsonData.map(v =>
         filterVal.map(j => {
-          if (j === "timestamp") {
-            return parseTime(v[j]);
-          } else {
             return v[j];
-          }
         })
       );
     },
