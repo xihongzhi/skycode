@@ -8,7 +8,7 @@
         <div data class="row">
           <div data class="col-md-12">
             <div data class="form-group form-inline pull-left VueTables__search">
-              <div class="VueTables__search-field col" style="margin-top:15px;margin-left: 209px;">
+              <div class="style="float: right;" col" style="margin-top:15px;margin-left: 209px;">
                 <button type="button" class="btn mr-1 mb-1 btn-info" @click="getList()">查询</button>
                 <button
                   type="button"
@@ -33,7 +33,7 @@
           <el-table-column fixed prop="layout" label="布局" width="300"></el-table-column>
         </el-table>
       </div>
-      <div class="VueTables__search-field ml-auto" style="float: right;">
+      <div class="style="float: right;" ml-auto" style="float: right;">
         <pagination
           v-show="total>0"
           :total="total"
