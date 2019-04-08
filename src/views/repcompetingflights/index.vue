@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <div class="filter-container" style=" margin-top: 10px;">
-      <label label-width="45px" class="postInfo-container-item">始发机场:</label>
-      <el-input v-model="condition.dep" style="width: 200px;" class="filter-item"/>
+    <div class="filter-container" style=" margin-top: 5px;">
+      <label  class="postInfo-container-item">始发机场:</label>
+      <el-input v-model="condition.dep" style="width: 150px;" class="filter-item"/>
       <label class="postInfo-container-item">到达机场:</label>
-      <el-input v-model="condition.arr" style="width: 200px;" class="filter-item"/>
+      <el-input v-model="condition.arr" style="width: 150px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
-      <el-input v-model="condition.flightNo" style="width: 200px;" class="filter-item"/>
+      <el-input v-model="condition.flightNo" style="width: 150px;" class="filter-item"/>
       <label class="postInfo-container-item">旅行日期:</label>
       <el-date-picker
         v-model="condition.flightDate"
@@ -14,6 +14,7 @@
         value-format=" yyyy-MM-dd"
         format="yyyy-MM-dd"
         placeholder="选择日期"
+        style="width:150px"
       ></el-date-picker>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
       <el-button
@@ -31,37 +32,37 @@
       fit
       highlight-current-row
       empty-text
-      height="580px"
+      height="450px"
       style="width: 100%"
     >
-      <el-table-column fixed align="center" label="航段" width="150">
+      <el-table-column fixed align="center" label="航段" width="100">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
       <el-table-column
         fixed
         align="center"
         label="起飞时间"
-        width="120"
+        width="auto"
         prop="flightDate"
         :formatter="timeFormat"
       ></el-table-column>
-      <el-table-column fixed prop="flightNO" align="center" label="航班号" width="120"></el-table-column>
-      <el-table-column fixed prop="layout" align="center" label="布局" width="120"></el-table-column>
+      <el-table-column fixed prop="flightNO" align="center" label="航班号" width="80"></el-table-column>
+      <el-table-column fixed prop="layout" align="center" label="布局" width="60"></el-table-column>
       <el-table-column align="center" label="上客速度">
-        <el-table-column prop="d0" align="center" label="0" width="120"></el-table-column>
-        <el-table-column prop="d1" align="center" label="1" width="120"></el-table-column>
-        <el-table-column prop="d2" align="center" label="2" width="120"></el-table-column>
-        <el-table-column prop="d3" align="center" label="3" width="120"></el-table-column>
-        <el-table-column prop="d4" align="center" label="4" width="120"></el-table-column>
-        <el-table-column prop="d5" align="center" label="5" width="120"></el-table-column>
-        <el-table-column prop="d6" align="center" label="6" width="120"></el-table-column>
-        <el-table-column prop="d7" align="center" label="7" width="120"></el-table-column>
-        <el-table-column prop="dOut" align="center" label="7+" width="120"></el-table-column>
+        <el-table-column prop="d0" align="center" label="0" width="60"></el-table-column>
+        <el-table-column prop="d1" align="center" label="1" width="60"></el-table-column>
+        <el-table-column prop="d2" align="center" label="2" width="60"></el-table-column>
+        <el-table-column prop="d3" align="center" label="3" width="60"></el-table-column>
+        <el-table-column prop="d4" align="center" label="4" width="60"></el-table-column>
+        <el-table-column prop="d5" align="center" label="5" width="60"></el-table-column>
+        <el-table-column prop="d6" align="center" label="6" width="60"></el-table-column>
+        <el-table-column prop="d7" align="center" label="7" width="60"></el-table-column>
+        <el-table-column prop="dOut" align="center" label="7+" width="60"></el-table-column>
       </el-table-column>
       <el-table-column :label="this.condition.flightDate" align="center">
-        <el-table-column prop="lowestPrice" align="center" label="CTRIP" width="120"></el-table-column>
-        <el-table-column prop="lowestPriceChange" align="center" label="价格变化" width="120"></el-table-column>
-        <el-table-column prop="passagerNumber" align="center" label="人数" width="120"></el-table-column>
+        <el-table-column prop="lowestPrice" align="center" label="CTRIP" width="80"></el-table-column>
+        <el-table-column prop="lowestPriceChange" align="center" label="价格变化" width="80"></el-table-column>
+        <el-table-column prop="passagerNumber" align="center" label="人数" width="60"></el-table-column>
       </el-table-column>
         <div slot="empty">
           <p>
@@ -93,7 +94,7 @@ export default {
     return {
       tableData: null,
       total: 0,
-      listLoading: true,
+      listLoading: false,
       downloadLoading: false,
       condition: {
         pageIndex: 1,
@@ -106,7 +107,8 @@ export default {
     };
   },
   mounted() {
-    this.getList();
+  //  this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 50;
+   // this.getList();
   },
   methods: {
     dateFormat: function(row, column) {
@@ -130,6 +132,10 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
+      // else{
+      //    this.$message({message: "请输入始发机场",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           this.$message({ message: "目的机场必须为三字符", type: "warning" });
@@ -137,6 +143,10 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
+      // else{
+      //    this.$message({message: "请输入到达机场",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.flightNo) {
         if (this.condition.flightNo.indexOf(";") === "-1") {
           let strs = this.condition.flightNo.split(";");
@@ -164,6 +174,10 @@ export default {
           }
         }
       }
+      // if (!this.condition.flightDate) {
+      //    this.$message({message: "请选择旅行日期",type: "warning"});
+      //     return false;
+      //  }
       return true;
     },
 

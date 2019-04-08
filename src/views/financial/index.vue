@@ -35,27 +35,27 @@
       fit
       highlight-current-row
       empty-text
-      height="580px"
+      height="400px"
       style="width: 100%"
     >
       <!-- <el-table-column fixed prop="futureID" align="center" label="序号" width="100"></el-table-column> -->
-      <el-table-column fixed align="center" label="日期" width="130">
+      <el-table-column fixed align="center" label="日期" width="110">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="航段" width="150">
+      <el-table-column fixed align="center" label="航段" width="130">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="起飞时间" width="130">
+      <el-table-column fixed align="center" label="起飞时间" width="110">
         <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
       </el-table-column>
 
-      <el-table-column fixed prop="flightNo" align="center" label="航班号" width="130"></el-table-column>
-      <el-table-column fixed prop="layout" align="center" label="布局" width="130"></el-table-column>
-      <el-table-column prop="lowestPrice" align="center" label="价格" width="130"></el-table-column>
-      <el-table-column prop="lowestPriceChange" align="center" label="价格变化" width="130"></el-table-column>
-      <el-table-column prop="crowRate" align="center" label="客座率" width="130"></el-table-column>
-      <el-table-column prop="passengerChange" align="center" label="上客速度" width="130"></el-table-column>
-      <el-table-column prop="addTime" align="center" label="入库日期" width="260"></el-table-column>
+      <el-table-column fixed prop="flightNo" align="center" label="航班号" width="110"></el-table-column>
+      <el-table-column fixed prop="layout" align="center" label="布局" width="110"></el-table-column>
+      <el-table-column prop="lowestPrice" align="center" label="价格" width="110"></el-table-column>
+      <el-table-column prop="lowestPriceChange" align="center" label="价格变化" width="110"></el-table-column>
+      <el-table-column prop="crowRate" align="center" label="客座率" width="110"></el-table-column>
+      <el-table-column prop="passengerChange" align="center" label="上客速度" width="100"></el-table-column>
+      <!-- <el-table-column prop="addTime" align="center" label="入库日期" width="260"></el-table-column> -->
         <div slot="empty">
           <p>
             <label/>

@@ -70,7 +70,7 @@ export default {
   navbar: {
     logOut: 'Log Out',
     dashboard: 'Dashboard',
-    github: 'Github',
+    // github: 'Github',
     theme: 'Theme',
     size: 'Global Size'
   },

@@ -111,8 +111,8 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/repflightflyincome/index'),
-        name: '-1天承运航班收入',
-        meta: { title: '-1天承运航班收入', icon: 'guide'}
+        name: '承运航班收入数据',
+        meta: { title: '承运航班收入数据', icon: 'guide'}
       }
     ]
   },
@@ -182,7 +182,7 @@ export const asyncRoutes = [
   // componentsRouter,
   // chartsRouter,
   // nestedRouter,
-   tableRouter,
+  // tableRouter,
   // treeTableRouter,
 
   // {

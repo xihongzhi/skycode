@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <div class="filter-container" style=" margin-top: 10px;">
+    <div class="filter-container" style=" margin-top: 5px;">
       <label label-width="45px" class="postInfo-container-item">始发城市:</label>
-      <el-input v-model="condition.dep" style="width: 200px;" class="filter-item"/>
+      <el-input v-model="condition.dep" style="width: 150px;" class="filter-item"/>
       <label class="postInfo-container-item">目的城市:</label>
-      <el-input v-model="condition.arr" style="width: 200px;" class="filter-item"/>
+      <el-input v-model="condition.arr" style="width: 150px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
-      <el-input v-model="condition.flightNo" style="width: 200px;" class="filter-item"/>
+      <el-input v-model="condition.flightNo" style="width: 150px;" class="filter-item"/>
       <label class="postInfo-container-item">旅行日期:</label>
       <el-date-picker
         v-model="condition.flightDate"
@@ -14,6 +14,7 @@
         value-format=" yyyy-MM-dd"
         format="yyyy-MM-dd"
         placeholder="选择日期"
+        style="width:150px"
       ></el-date-picker>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
       <el-button
@@ -32,32 +33,32 @@
         fit
         highlight-current-row
         empty-text
-        height="580px"
+        height="450px"
         style="width: 100%"
       >
-        <el-table-column fixed prop="flightNO" align="center" label="航班号" width="150"></el-table-column>
-        <el-table-column fixed prop="dep" align="center" label="始发" width="120"></el-table-column>
-        <el-table-column fixed prop="arr" align="center" label="目的" width="120"></el-table-column>
-        <el-table-column fixed label="旅行日期" align="center" width="120">
+        <el-table-column fixed prop="flightNO" align="center" label="航班号" width="80"></el-table-column>
+        <el-table-column fixed prop="dep" align="center" label="始发" width="60"></el-table-column>
+        <el-table-column fixed prop="arr" align="center" label="目的" width="60"></el-table-column>
+        <el-table-column fixed label="旅行日期" align="center" width="80">
           <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
         </el-table-column>
-        <el-table-column fixed align="center" label="起飞时间" width="120">
+        <el-table-column fixed align="center" label="起飞时间" width="80">
           <template slot-scope="scope">{{timeFormat(scope.row.flightDate)}}</template>
         </el-table-column>
-        <el-table-column prop="flightstyle" align="center" label="机型" width="120"></el-table-column>
-        <el-table-column prop="flightTime" align="center" label="飞行时间" width="120"></el-table-column>
-        <el-table-column prop="flightDistance" align="center" label="公里数" width="120"></el-table-column>
-        <el-table-column prop="passagerCount" align="center" label="乘客人数" width="120"></el-table-column>
-        <el-table-column prop="layoutNumber" align="center" label="布局数" width="120"></el-table-column>
-        <el-table-column prop="flightIncome" align="center" label="航班收入" width="120"></el-table-column>
-        <el-table-column prop="crowdRate" align="center" label="客座率" width="120"></el-table-column>
-        <el-table-column prop="everyTimeIncome" align="center" label="小时收入" width="120"></el-table-column>
-        <el-table-column prop="everyPassagerDistanceIncome" align="center" label="客公里收入" width="120"></el-table-column>
-        <el-table-column prop="everyLayoutDistanceIncome" align="center" label="座公里收入" width="120"></el-table-column>
-        <el-table-column prop="layoutDistance" align="center" label="座公里" width="120"></el-table-column>
-        <el-table-column prop="passagerDistance" align="center" label="客公里" width="120"></el-table-column>
+        <el-table-column prop="flightstyle" align="center" label="机型" width="70"></el-table-column>
+        <el-table-column prop="flightTime" align="center" label="飞行时间" width="80"></el-table-column>
+        <el-table-column prop="flightDistance" align="center" label="公里数" width="60"></el-table-column>
+        <el-table-column prop="passagerCount" align="center" label="乘客人数" width="80"></el-table-column>
+        <el-table-column prop="layoutNumber" align="center" label="布局数" width="60"></el-table-column>
+        <el-table-column prop="flightIncome" align="center" label="航班收入" width="80"></el-table-column>
+        <el-table-column prop="crowdRate" align="center" label="客座率" width="60"></el-table-column>
+        <el-table-column prop="everyTimeIncome" align="center" label="小时收入" width="80"></el-table-column>
+        <el-table-column prop="everyPassagerDistanceIncome" align="center" label="客公里收入" width="90"></el-table-column>
+        <el-table-column prop="everyLayoutDistanceIncome" align="center" label="座公里收入" width="90"></el-table-column>
+        <!-- <el-table-column prop="layoutDistance" align="center" label="座公里" width="120"></el-table-column>
+        <el-table-column prop="passagerDistance" align="center" label="客公里" width="120"></el-table-column> -->
         <!-- fixed="right" -->
-        <el-table-column label="操作" width="100">
+        <el-table-column label="操作" width="60">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope)" type="text" size="small">查看详情</el-button>
           </template>
@@ -84,17 +85,17 @@
         <el-table
           :data="detailtableData"
           v-loading="detaillistLoading"
-          height:550px
+          height:420px
           style="width:100% "
         >
-          <el-table-column prop="flightNo" label="航班号" width="120"></el-table-column>
-          <el-table-column prop="flightDate" label="日期" :formatter="dateFormat" width="120"></el-table-column>
-          <el-table-column prop="dep" label="始发" width="120"></el-table-column>
-          <el-table-column prop="arr" label="目的" width="120"></el-table-column>
-          <el-table-column prop="class" label="舱位" width="120"></el-table-column>
-          <el-table-column prop="flightIncome" label="收入" width="120"></el-table-column>
-          <el-table-column prop="passagerCount" label="人数" width="120"></el-table-column>
-          <el-table-column prop="averagePrice" label="均价" width="120"></el-table-column>
+          <el-table-column prop="flightNo" label="航班号" width="80"></el-table-column>
+          <el-table-column prop="flightDate" label="日期" :formatter="dateFormat" width="100"></el-table-column>
+          <el-table-column prop="dep" label="始发" width="60"></el-table-column>
+          <el-table-column prop="arr" label="目的" width="60"></el-table-column>
+          <el-table-column prop="class" label="舱位" width="80"></el-table-column>
+          <el-table-column prop="flightIncome" label="收入" width="80"></el-table-column>
+          <el-table-column prop="passagerCount" label="人数" width="80"></el-table-column>
+          <el-table-column prop="averagePrice" label="均价" width="80"></el-table-column>
         </el-table>
       </div>
     </el-dialog>
@@ -153,6 +154,10 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
+      // else{
+      //    this.$message({message: "请输入始发城市",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           this.$message({ message: "目的城市必须为三字符", type: "warning" });
@@ -160,6 +165,10 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
+      // else{
+      //    this.$message({message: "请输入目的城市",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.flightNo) {
         if (this.condition.flightNo.indexOf(";") === "-1") {
           let strs = this.condition.flightNo.split(";");
@@ -187,6 +196,10 @@ export default {
           }
         }
       }
+      // if (!this.condition.flightDate) {
+      //    this.$message({message: "请选择旅行日期",type: "warning"});
+      //     return false;
+      //  }
       return true;
     },
 
@@ -268,7 +281,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "1天承运航班收入"
+          filename: "承运航班收入数据"
         });
         this.downloadLoading = false;
       });
@@ -296,11 +309,11 @@ export default {
       RepFlightflyIncomeDetail(t.detailcondition)
         .then(response => {
           if (response.data.code == "0") {
-            this.tableData = response.data.data;
-            this.total = response.data.count;
+            this.detailtableData = response.data.data;
+          //  this.total = response.data.count;
           } else {
-            this.tableData = [];
-            this.total = 0;
+            this.detailtableData = [];
+         //   this.total = 0;
             this.$message({ message: "获取列表失败", type: "error" });
           }
         })
