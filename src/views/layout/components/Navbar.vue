@@ -16,7 +16,7 @@
           <size-select class="right-menu-item hover-effect" />
         </el-tooltip>
 
-      <lang-select class="right-menu-item hover-effect" /> 
+      <!-- <lang-select class="right-menu-item hover-effect" />  -->
 
       <!--  <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
           <theme-picker class="right-menu-item hover-effect" />
