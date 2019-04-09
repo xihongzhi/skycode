@@ -12,9 +12,9 @@
 
         <screenfull class="right-menu-item hover-effect" />
 
-        <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
+        <!-- <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
 
       <!-- <lang-select class="right-menu-item hover-effect" />  -->
 
@@ -24,10 +24,14 @@
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
-        <div class="avatar-wrapper">
+
+        <div class="card-panel-icon-wrapper icon-people">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <!-- <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
-        </div>
+        </div> -->
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">
             <el-dropdown-item>
