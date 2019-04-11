@@ -133,7 +133,10 @@ export default {
       },
       tableData: null,
       detailcondition: {
-        flightNo: ""
+        flightNo: "",
+        dep: "",
+        arr: "",
+        flightDate:""
       },
       detailtableData: null
     };
@@ -181,10 +184,10 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
-      else{
-         this.$message({message: "请输入始发城市",type: "warning"});
-          return false;
-      }
+      // else{
+      //    this.$message({message: "请输入始发城市",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           this.$message({ message: "目的城市必须为三字符", type: "warning" });
@@ -192,10 +195,10 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-      else{
-         this.$message({message: "请输入目的城市",type: "warning"});
-          return false;
-      }
+      // else{
+      //    this.$message({message: "请输入目的城市",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.flightNo) {
         if (this.condition.flightNo.indexOf(";") === "-1") {
           let strs = this.condition.flightNo.split(";");
@@ -223,10 +226,10 @@ export default {
           }
         }
       }
-      if (!this.condition.flightDate) {
-         this.$message({message: "请选择旅行日期",type: "warning"});
-          return false;
-       }
+      // if (!this.condition.flightDate) {
+      //    this.$message({message: "请选择旅行日期",type: "warning"});
+      //     return false;
+      //  }
       return true;
     },
 
@@ -327,11 +330,16 @@ export default {
     handleClick(scope) {
       this.dialogVisible = true;
       let row = deepClone(scope.row);
-      this.detailcondition.flightNo = row.flightNo;
+      // this.detailcondition.rid=row.incomeID;
+      this.detailcondition.flightNo = row.flightNO;
+       this.detailcondition.dep = row.dep;
+       this.detailcondition.arr=row.arr;
+       this.detailcondition.flightDate=row.flightDate;
       this.getDetailList();
     },
     getDetailList() {
       let t = this;
+      debugger;
       // this.detaillistLoading = true;
       RepFlightflyIncomeDetail(t.detailcondition)
         .then(response => {
