@@ -134,6 +134,10 @@ export default {
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
+      if(!this.condition.dep && !this.condition.arr && !this.condition.flightNo){
+         this.$message({message: "请输入始发城市或目的城市或填写航班号",type: "warning"});
+          return false;
+      }
       if (this.condition.dep) {
         if (!reg1.test(this.condition.dep.toUpperCase())) {
           swal({ title: "提示", text: "始发机场必须为三字符" });
@@ -141,10 +145,10 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
-       else{
-         this.$message({message: "请输入始发机场",type: "warning"});
-          return false;
-      }
+      //  else{
+      //    this.$message({message: "请输入始发机场",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           swal({ title: "提示", text: "目的机场必须为三字符" });
@@ -152,14 +156,14 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-       else{
-         this.$message({message: "请输入目的机场",type: "warning"});
-          return false;
-      }
-      if (!this.time) {
-         this.$message({message: "请选择日期",type: "warning"});
-          return false;
-       }
+      //  else{
+      //    this.$message({message: "请输入目的机场",type: "warning"});
+      //     return false;
+      // }
+      // if (!this.time) {
+      //    this.$message({message: "请选择日期",type: "warning"});
+      //     return false;
+      //  }
       if (this.condition.flightNo) {
         if (this.condition.flightNo.indexOf(";") === "-1") {
           let strs = this.condition.flightNo.split(";");
