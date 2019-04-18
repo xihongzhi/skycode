@@ -78,6 +78,7 @@
 <script>
 import Pagination from "@/components/Pagination";
 import { RepFutureFlightSell } from "@/api/ajax.js";
+import { formatDate,timeFormat,dateFormat } from '@/utils/datefarmate'
 export default {
   components: {
     Pagination
@@ -192,12 +193,12 @@ export default {
       if (!this.validate()) {
         return;
       }
+      debugger;
       this.listLoading = true;
-      let t = this,
-        o = t.condition;
+      let t = this, o = t.condition;
       if (t.time && t.time.length) {
-        o["startFlightDate"] = this.formatDate(t["time"][0], "yyyy-MM-dd");
-        o["endFlightDate"] = this.formatDate(t["time"][1], "yyyy-MM-dd");
+        o["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+        o["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
       }
       RepFutureFlightSell(o)
         .then(response => {
@@ -275,36 +276,6 @@ export default {
             return v[j];
         })
       );
-    },
-    formatDate(time, fmt) {
-      let date = time ? (Number(time) && new Date(time)) || time : new Date();
-      if (/(y+)/.test(fmt)) {
-        fmt = fmt.replace(
-          RegExp.$1,
-          (date.getFullYear() + "").substr(4 - RegExp.$1.length)
-        );
-      }
-      let o = {
-        "Y+": date.getFullYear(),
-        "M+": date.getMonth() + 1,
-        "d+": date.getDate(),
-        "h+": date.getHours(),
-        "m+": date.getMinutes(),
-        "s+": date.getSeconds()
-      };
-      for (let k in o) {
-        if (new RegExp(`(${k})`).test(fmt)) {
-          let str = o[k] + "";
-          fmt = fmt.replace(
-            RegExp.$1,
-            RegExp.$1.length === 1 ? str : this.padLeftZero(str)
-          );
-        }
-      }
-      return fmt;
-    },
-    padLeftZero(str) {
-      return ("00" + str).substr(str.length);
     }
   }
 };

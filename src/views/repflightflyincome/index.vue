@@ -16,7 +16,7 @@
         placeholder="选择日期"
         style="width:150px"
       ></el-date-picker> -->
-        <el-date-picker
+      <el-date-picker
           type="daterange"
           v-model="time"
           start-placeholder="开始日期"
@@ -119,6 +119,7 @@
  <script>
 import Pagination from "@/components/Pagination";
 import { deepClone } from "@/utils";
+import { formatDate } from '@/utils/datefarmate'
 import { RepFlightflyIncome, RepFlightflyIncomeDetail } from "@/api/ajax.js";
 export default {
   components: {
@@ -131,14 +132,13 @@ export default {
       listLoading: false,
       dialogVisible: false,
       total: 0,
+      time: [new Date().setDate(new Date().getDate()-1), new Date().setDate(new Date().getDate()-1)],
       condition: {
         pageIndex: 1,
         pageSize: 10,
         dep: "",
         arr: "",
         flightNo: "",
-        // flightDate: new Date()
-        time: [new Date(),setDate(new Date().getDate()-1), new Date().setDate(new Date().getDate()-1)],
       },
       tableData: null,
       detailcondition: {
@@ -238,9 +238,14 @@ export default {
       if (!this.validate()) {
         return;
       }
-      let t = this;
+      debugger;
       this.listLoading = true;
-      RepFlightflyIncome(t.condition)
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+        o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+      }
+      RepFlightflyIncome(o)
         .then(response => {
           if (response.data.code == "0") {
             this.tableData = response.data.data;
@@ -357,8 +362,9 @@ export default {
           console.log(err);
           this.$message({ message: "获取列表失败", type: "error" });
         });
-    }
+    },
   }
+ 
 };
 </script>
 <style scoped>
