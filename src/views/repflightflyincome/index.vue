@@ -53,7 +53,7 @@
           <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
         </el-table-column>
         <el-table-column fixed align="center" label="起飞时间" min-width="80">
-          <template slot-scope="scope">{{timeFormat(scope.row.flightDate)}}</template>
+          <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
         </el-table-column>
         <el-table-column prop="flightstyle" align="center" label="机型" min-width="80"></el-table-column>
         <el-table-column prop="flightTime" align="center" label="飞行时间" min-width="80"></el-table-column>
@@ -95,6 +95,9 @@
         <el-table
           :data="detailtableData"
           v-loading="detaillistLoading"
+          border
+          fit
+          highlight-current-row
           height:400px
           style="width:100% "
           :row-style="rowClass"
@@ -111,6 +114,13 @@
           <el-table-column prop="passagerCount" label="人数" min-width="80"></el-table-column>
           <el-table-column prop="averagePrice" label="均价" min-width="80"></el-table-column>
         </el-table>
+         <pagination
+        v-show="detailtotal>0"
+        :total="detailtotal"
+        :page.sync="detailcondition.pageIndex"
+        :limit.sync="detailcondition.pageSize"
+        @pagination="getDetailList"
+      />
       </div>
     </el-dialog>
   </div>
@@ -142,12 +152,15 @@ export default {
       },
       tableData: null,
       detailcondition: {
+        pageIndex: 1,
+        pageSize: 10,
         flightNo: "",
         dep: "",
         arr: "",
         flightDate:""
       },
-      detailtableData: null
+      detailtableData: null,
+      detailtotal: 0,
     };
   },
   mounted() {
@@ -161,10 +174,16 @@ export default {
       return { "padding": "0" }
     },
     dateFormat: function(flightDate) {
+      if(flightDate==null){
+        return null;
+      }
       var t = new Date(flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
       return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
     },
     timeFormat: function(column) {
+      if(column==null){
+        return null;
+      }
       var t = new Date(column); //row 表示一行数据, updateTime 表示要格式化的字段名称
       let h;
       let m;
@@ -245,6 +264,7 @@ export default {
         o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
         o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
       }
+
       RepFlightflyIncome(o)
         .then(response => {
           if (response.data.code == "0") {
@@ -345,21 +365,23 @@ export default {
     },
     getDetailList() {
       let t = this;
-      debugger;
-      // this.detaillistLoading = true;
+       this.detaillistLoading = true;
       RepFlightflyIncomeDetail(t.detailcondition)
         .then(response => {
           if (response.data.code == "0") {
+            debugger;
             this.detailtableData = response.data.data;
-          //  this.total = response.data.count;
+            this.detailtotal = response.data.count;
           } else {
             this.detailtableData = [];
-         //   this.total = 0;
+            this.detailtotal = 0;
             this.$message({ message: "获取列表失败", type: "error" });
           }
+           this.detaillistLoading = false;
         })
         .catch(err => {
           console.log(err);
+           this.detaillistLoading = false;
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },

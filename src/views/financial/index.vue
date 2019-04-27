@@ -7,7 +7,7 @@
         <label class="postInfo-container-item">到达机场:</label>
         <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
         <label class="postInfo-container-item">航班号:</label>
-        <el-input v-model="condition.flightNo" style="width: 120px;" class="filter-item"/>
+        <el-input v-model="condition.flightNO" style="width: 120px;" class="filter-item"/>
         <label class="postInfo-container-item">日期:</label>
         <el-date-picker
           type="daterange"
@@ -78,7 +78,7 @@
 <script>
 import Pagination from "@/components/Pagination";
 import { RepFutureFlightSell } from "@/api/ajax.js";
-import { formatDate,timeFormat,dateFormat } from '@/utils/datefarmate'
+import { formatDate} from '@/utils/datefarmate'
 export default {
   components: {
     Pagination
@@ -94,7 +94,7 @@ export default {
         pageSize: 10,
         dep: "",
         arr: "",
-        flightNo: ""
+        flightNO: ""
       },
       tableData: null
     };
@@ -110,11 +110,17 @@ export default {
       return { "padding": "0" }
     },
     dateFormat: function(flightDate) {
+      if(flightDate==null){
+        return null;
+      }
       var t = new Date(flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
       return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
     },
 
     timeFormat: function(column) {
+      if(column==null){
+        return null;
+      }
       let h;
       let m;
       var t = new Date(column); //row 表示一行数据, updateTime 表示要格式化的字段名称
@@ -135,7 +141,7 @@ export default {
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
-      if(!this.condition.dep && !this.condition.arr && !this.condition.flightNo){
+      if(!this.condition.dep && !this.condition.arr && !this.condition.flightNO){
          this.$message({message: "请输入始发城市或目的城市或填写航班号",type: "warning"});
           return false;
       }
@@ -146,10 +152,6 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
-      //  else{
-      //    this.$message({message: "请输入始发机场",type: "warning"});
-      //     return false;
-      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           swal({ title: "提示", text: "目的机场必须为三字符" });
@@ -157,30 +159,22 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-      //  else{
-      //    this.$message({message: "请输入目的机场",type: "warning"});
-      //     return false;
-      // }
-      // if (!this.time) {
-      //    this.$message({message: "请选择日期",type: "warning"});
-      //     return false;
-      //  }
-      if (this.condition.flightNo) {
-        if (this.condition.flightNo.indexOf(";") === "-1") {
-          let strs = this.condition.flightNo.split(";");
+      if (this.condition.flightNO) {
+        if (this.condition.flightNO.indexOf(";") === "-1") {
+          let strs = this.condition.flightNO.split(";");
           if (strs.length > 6) {
             swal({ title: "提示", text: "最多只能航班号填六组航班号" });
             return false;
           } else {
             strs.forEach(item => {
-              if (!reg2.test(item.flightNo.toUpperCase())) {
+              if (!reg2.test(item.flightNO.toUpperCase())) {
                 swal({ title: "提示", text: "航班号必须为六位字符" });
                 return false;
               }
             });
           }
         } else {
-          if (!reg2.test(this.condition.flightNo.toUpperCase())) {
+          if (!reg2.test(this.condition.flightNO.toUpperCase())) {
             swal({ title: "提示", text: "航班号必须为六位字符" });
             return false;
           }
@@ -193,7 +187,6 @@ export default {
       if (!this.validate()) {
         return;
       }
-      debugger;
       this.listLoading = true;
       let t = this, o = t.condition;
       if (t.time && t.time.length) {

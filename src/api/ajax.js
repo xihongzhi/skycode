@@ -7,10 +7,26 @@ export function RepFutureFlightSell(data) {
       data
     })
   }
-    //竞飞航班上客速度报表
+    //未来航班上客速度报表
 export function RepCompetingFlights(data) {
     return request({
       url: '/api/RepCompetingFlights',
+      method: 'post',
+      data
+    })
+  }
+  //客座率当天抓取明细
+  export function CrowRateSameDayDetail(data) {
+    return request({
+      url: '/api/CrowRateSameDayDetail',
+      method: 'post',
+      data
+    })
+  }
+  //携程最低价当天抓取明细
+  export function LowestPriceSameDayDetail(data) {
+    return request({
+      url: '/api/LowestPriceSameDayDetail',
       method: 'post',
       data
     })

@@ -87,8 +87,8 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/repcompetingflights/index'),
-        name: '竞飞航班上客速度',
-        meta: { title: '竞飞航班上客速度', icon: 'tab'}
+        name: '未来航班上客速度',
+        meta: { title: '未来航班上客速度', icon: 'tab'}
       }
     ]
   },

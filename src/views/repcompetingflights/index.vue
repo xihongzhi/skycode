@@ -7,15 +7,23 @@
       <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
       <el-input v-model="condition.flightNo" style="width: 120px;" class="filter-item"/>
-      <label class="postInfo-container-item">旅行日期:</label>
-      <el-date-picker
+      <label class="postInfo-container-item">日期:</label>
+      <!-- <el-date-picker
         v-model="condition.flightDate"
         type="date"
         value-format=" yyyy-MM-dd"
         format="yyyy-MM-dd"
         placeholder="选择日期"
         style="width:150px"
-      ></el-date-picker>
+      ></el-date-picker> -->
+        <el-date-picker
+          type="daterange"
+          v-model="time"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
+          style="width: 230px;"
+        ></el-date-picker>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
       <el-button
         :loading="downloadLoading"
@@ -40,8 +48,11 @@
       <el-table-column fixed align="center" label="航段" min-width="100">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
+      <el-table-column fixed align="center" label="旅行日期" min-width="80">
+        <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
+      </el-table-column>
       <el-table-column fixed align="center" label="起飞时间" min-width="80">
-        <template slot-scope="scope">{{timeFormat(scope.row.flightDate)}}</template>
+        <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
       </el-table-column>
       <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
       <el-table-column fixed prop="layout" align="center" label="布局" min-width="60"></el-table-column>
@@ -56,10 +67,24 @@
         <el-table-column prop="d7" align="center" label="7" min-width="60"></el-table-column>
         <el-table-column prop="dOut" align="center" label="7+" min-width="60"></el-table-column>
       </el-table-column>
-      <el-table-column :label="this.condition.flightDate" align="center">
-        <el-table-column prop="lowestPrice" align="center" label="CTRIP" min-width="80"></el-table-column>
+      <!-- <el-table-column :label="this.condition.flightDate" align="center"> -->
+      <el-table-column label="CTRIP" align="center">
+        <el-table-column align="center" label="最低价" min-width="80">
+           <template slot-scope="scope">
+             <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.lowestPrice}}</el-button>
+            </template> 
+        </el-table-column>
         <el-table-column prop="lowestPriceChange" align="center" label="价格变化" min-width="80"></el-table-column>
+        <el-table-column prop="grabLowestPriceTime" align="center" label="采集时间" min-width="90"></el-table-column>
+      </el-table-column>
+      <el-table-column label="销售数" align="center">
+        <el-table-column  align="center" label="客座率" min-width="80">
+           <template slot-scope="scope">
+             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate}}</el-button>
+            </template> 
+        </el-table-column>
         <el-table-column prop="passagerNumber" align="center" label="人数" min-width="60"></el-table-column>
+        <el-table-column prop="grabCrowRateTime" align="center" label="采集时间" min-width="90"></el-table-column>
       </el-table-column>
         <div slot="empty">
           <p>
@@ -76,13 +101,80 @@
         @pagination="getList"
       />
     </div>
+
+    <el-dialog :visible.sync="dialogVisible" title="最低价采集日志">
+      <div class="table-responsive">
+        <el-table
+          :data="detailtableData"
+          :span-method="objectSpanMethod"
+          v-loading="detaillistLoading"
+           border
+          fit
+          highlight-current-row
+          height:400px
+          style="width:100% "
+          :row-style="rowClass"
+          :cell-style="cellClass"
+        >
+          <el-table-column label="航段" min-width="100">
+             <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
+          </el-table-column>
+          <el-table-column prop="flightNo" label="航班号" min-width="80"></el-table-column>
+          <el-table-column prop="grabTime" label="采集时间" align="center" min-width="120"></el-table-column>
+          <el-table-column prop="price" label="最低价" min-width="80"></el-table-column>
+        </el-table>
+     
+          <pagination
+            v-show="detailtotal>0"
+            :total="detailtotal"
+            :page.sync="detailcondition.pageIndex"
+            :limit.sync="detailcondition.pageSize"
+            @pagination="getDetailList"
+          />
+
+      </div>
+    </el-dialog>
+
+    
+    <el-dialog :visible.sync="grabResultVisible" title="客座率采集日志">
+      <div class="table-responsive">
+        <el-table
+          :data="grabResultData"
+          :span-method="objectSpanMethod"
+          v-loading="grabResultLoading"
+          border
+          fit
+          highlight-current-row
+          height:400px
+          style="width:100% "
+          :row-style="rowClass"
+          :cell-style="cellClass"
+        >
+         <el-table-column  label="航段" min-width="100">
+             <template slot-scope="scope">{{scope.row.ori}}-{{scope.row.arrival}}</template>
+          </el-table-column>
+          <el-table-column prop="flightNo" label="航班号" min-width="80"></el-table-column>
+          <el-table-column prop="addtime" label="采集时间" align="center" min-width="120"></el-table-column>
+          <el-table-column prop="kezuoRate" label="客座率" min-width="80"></el-table-column>
+        </el-table>
+        <pagination
+            v-show="grabResulttotal>0"
+            :total="grabResulttotal"
+            :page.sync="detailcondition.pageIndex"
+            :limit.sync="detailcondition.pageSize"
+            @pagination="gepResultList"
+          />
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/Pagination";
-import { RepCompetingFlights } from "@/api/ajax.js";
-import { parseTime } from "@/utils";
+import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail } from "@/api/ajax.js";
+import { parseTime,deepClone } from "@/utils";
+import { formatDate } from '@/utils/datefarmate'
 export default {
   components: {
     Pagination
@@ -93,14 +185,36 @@ export default {
       total: 0,
       listLoading: false,
       downloadLoading: false,
+      time: [new Date().setDate(new Date().getDate()-1), new Date().setDate(new Date().getDate()-1)],
       condition: {
         pageIndex: 1,
         pageSize: 10,
         dep: "",
         arr: "",
+        flightNo: ""
+      },
+      detailcondition: {
+        pageIndex: 1,
+        pageSize: 10,
         flightNo: "",
-        flightDate: ""
-      }
+        dep: "",
+        arr: ""
+      },
+       grepcondition: {
+        pageIndex: 1,
+        pageSize: 10,
+        flightNo: "",
+        dep: "",
+        arr: ""
+      },
+       detailtotal:0,
+       dialogVisible: false,
+       detaillistLoading: false,
+       detailtableData: null,
+       grabResulttotal:0,
+       grabResultVisible:false,
+       grabResultLoading:false,
+       grabResultData:null
     };
   },
   mounted() {
@@ -115,10 +229,16 @@ export default {
       return { "padding": "0" }
     },
      dateFormat: function(flightDate) {
+     if(flightDate==null){
+        return null;
+      }
       var t = new Date(flightDate); //row 表示一行数据, updateTime 表示要格式化的字段名称
       return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
     },
     timeFormat: function(column) {
+      if(column==null){
+        return null;
+      }
       let h;
       let m;
       var t = new Date(column); //row 表示一行数据, updateTime 表示要格式化的字段名称
@@ -136,6 +256,74 @@ export default {
       }
       return h + ":" + m;
     },
+    //携程最低价当天抓取明细
+   handleClick(scope) {
+      this.dialogVisible = true;
+       let row = deepClone(scope.row);
+       this.detailcondition.flightNo = row.flightNO;
+       this.detailcondition.dep = row.dep;
+       this.detailcondition.arr=row.arr;
+       this.getDetailList();
+    },
+   
+   //客座率当天抓取明细
+   handleClickgrapResult(scope) {
+     debugger;
+       this.grabResultVisible = true;
+       let row = deepClone(scope.row);
+       this.grepcondition.flightNo = row.flightNO;
+       this.grepcondition.dep = row.dep;
+       this.grepcondition.arr=row.arr;
+      this.gepResultList();
+    },
+    //携程最低价当天抓取明细
+    getDetailList() {
+      let t = this;
+      debugger;
+       this.detaillistLoading = true;
+      LowestPriceSameDayDetail(t.detailcondition)
+        .then(response => {
+          debugger;
+          if (response.data.code == "0") {
+            this.detailtableData = response.data.data;
+            this.detailtotal = response.data.count;
+          } else {
+            this.detailtableData = [];
+            this.detailtotal = 0;
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+          this.detaillistLoading = false;
+        })
+        .catch(err => {
+          console.log(err);
+           this.detaillistLoading = false;
+          this.$message({ message: "获取列表失败", type: "error" });
+        });
+    },
+    //客座率当天抓取明细
+   gepResultList() {
+      let t = this;
+      debugger;
+       this.grabResultLoading = true;
+      CrowRateSameDayDetail(t.detailcondition)
+        .then(response => {
+          if (response.data.code == "0") {
+            this.grabResultData = response.data.data;
+            this.grabResulttotal = response.data.count;
+          } else {
+            this.grabResultData = [];
+            this.grabResulttotal = 0;
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+           this.grabResultLoading = false;
+        })
+        .catch(err => {
+          console.log(err);
+           this.grabResultLoading = false;
+          this.$message({ message: "获取列表失败", type: "error" });
+        });
+    },
+
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
@@ -191,10 +379,10 @@ export default {
           }
         }
       }
-      if (!this.condition.flightDate) {
-         this.$message({message: "请选择日期",type: "warning"});
-          return false;
-       }
+      // if (!this.condition.flightDate) {
+      //    this.$message({message: "请选择日期",type: "warning"});
+      //     return false;
+      //  }
       return true;
     },
 
@@ -203,10 +391,17 @@ export default {
         return;
       }
       this.listLoading = true;
-      RepCompetingFlights(this.condition)
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+        o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+      }
+      debugger;
+      RepCompetingFlights(o)
         .then(response => {
           if (response.data.code == "0") {
             this.tableData = response.data.data;
+            debugger;
             this.total = response.data.count;
           } else {
             this.tableData = [];
@@ -221,11 +416,27 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
-
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      debugger;
+        if (columnIndex === 0) {
+         // if (rowIndex % 2 === 0) {
+            return {
+              rowspan: 1,
+              colspan: 1
+            };
+          // } else {
+          //   return {
+          //     rowspan: 0,
+          //     colspan: 0
+          //   };
+          // }
+        }
+    },
     outElsx() {
       this.downloadLoading = true;
       let table = [];
       this.tableData.forEach(element => {
+        debugger
         element.aim = element.dep + "-" + element.dep;
         table.push(element);
       });
@@ -233,6 +444,7 @@ export default {
         const multiHeader = [
           [
             "航段",
+            "旅行日期",
             "起飞时间",
             "航班号",
             "布局",
@@ -245,7 +457,10 @@ export default {
             "",
             "",
             "",
-            this.condition.flightDate,
+            "CTRIP",
+            "",
+            "",
+            "销售数",
             "",
             ""
           ]
@@ -255,23 +470,28 @@ export default {
           "",
           "",
           "",
-          "d0",
-          "d1",
-          "d2",
-          "d3",
-          "d4",
-          "d5",
-          "d6",
-          "d7",
-          "dOut",
-          "CTRIP",
+          "",
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "7+",
+          "最低价",
           "价格变化",
-          "人数"
+          "采集时间",
+          "客座率",
+          "人数",
+          "采集时间"
         ];
         const filterVal = [
           "aim",
           "flightDate",
-          "flightNo",
+          "depTime",
+          "flightNO",
           "layout",
           "d0",
           "d1",
@@ -284,17 +504,20 @@ export default {
           "dOut",
           "lowestPrice",
           "lowestPriceChange",
-          "passagerNumber"
+          "grabLowestPriceTime",
+          "crowRate",
+          "passagerNumber",
+          "grabCrowRateTime"
         ];
         const list = table;
         const data = this.formatJson(filterVal, list);
-        const merges = ["A1:A2", "B1:B2", "C1:C2", "D1:D2", "E1:M1", "N1:P1"];
+        const merges = ["A1:A2", "B1:B2", "C1:C2", "D1:D2","E1:E2", "F1:N1", "O1:Q1","R1:T1"];
         excel.export_json_to_excel({
           multiHeader,
           header,
           merges,
           data,
-          filename: "竞飞航班上客速度"
+          filename: "未来航班上客速度"
         });
         this.downloadLoading = false;
       });
