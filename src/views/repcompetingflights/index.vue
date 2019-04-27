@@ -198,14 +198,16 @@ export default {
         pageSize: 10,
         flightNo: "",
         dep: "",
-        arr: ""
+        arr: "",
+        flightDate:""
       },
        grepcondition: {
         pageIndex: 1,
         pageSize: 10,
         flightNo: "",
         dep: "",
-        arr: ""
+        arr: "",
+        flightDate:""
       },
        detailtotal:0,
        dialogVisible: false,
@@ -257,26 +259,17 @@ export default {
       return h + ":" + m;
     },
     //携程最低价当天抓取明细
-   handleClick(scope) {
-      this.dialogVisible = true;
+   handleClick(scope) {    
        let row = deepClone(scope.row);
+       if(!row.lowestPrice)return;
+       this.dialogVisible = true;
+       this.detailcondition.flightDate=row.flightDate;
        this.detailcondition.flightNo = row.flightNO;
        this.detailcondition.dep = row.dep;
        this.detailcondition.arr=row.arr;
        this.getDetailList();
     },
-   
-   //客座率当天抓取明细
-   handleClickgrapResult(scope) {
-     debugger;
-       this.grabResultVisible = true;
-       let row = deepClone(scope.row);
-       this.grepcondition.flightNo = row.flightNO;
-       this.grepcondition.dep = row.dep;
-       this.grepcondition.arr=row.arr;
-      this.gepResultList();
-    },
-    //携程最低价当天抓取明细
+       //携程最低价当天抓取明细
     getDetailList() {
       let t = this;
       debugger;
@@ -300,12 +293,23 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
+   //客座率当天抓取明细
+   handleClickgrapResult(scope) {
+       let row = deepClone(scope.row);
+       if(!row.crowRate) return;
+       this.grabResultVisible = true;
+       this.grepcondition.flightDate=row.flightDate;
+       this.grepcondition.flightNo = row.flightNO;
+       this.grepcondition.dep = row.dep;
+       this.grepcondition.arr=row.arr;
+      this.gepResultList();
+    },
+
     //客座率当天抓取明细
    gepResultList() {
-      let t = this;
-      debugger;
+       let t = this;
        this.grabResultLoading = true;
-      CrowRateSameDayDetail(t.detailcondition)
+      CrowRateSameDayDetail(t.grepcondition)
         .then(response => {
           if (response.data.code == "0") {
             this.grabResultData = response.data.data;
@@ -327,6 +331,10 @@ export default {
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
+       if(!this.condition.dep && !this.condition.arr && !this.condition.flightNo){
+         this.$message({message: "请输入始发机场或目的机场或填写航班号",type: "warning"});
+          return false;
+      }
       if (this.condition.dep) {
         if (!reg1.test(this.condition.dep.toUpperCase())) {
           this.$message({
@@ -337,10 +345,10 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
-      else{
-         this.$message({message: "请输入始发机场",type: "warning"});
-          return false;
-      }
+      // else{
+      //    this.$message({message: "请输入始发机场",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           this.$message({ message: "目的机场必须为三字符", type: "warning" });
@@ -348,10 +356,10 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-      else{
-         this.$message({message: "请输入到达机场",type: "warning"});
-          return false;
-      }
+      // else{
+      //    this.$message({message: "请输入到达机场",type: "warning"});
+      //     return false;
+      // }
       if (this.condition.flightNo) {
         if (this.condition.flightNo.indexOf(";") === "-1") {
           let strs = this.condition.flightNo.split(";");
@@ -372,7 +380,8 @@ export default {
               }
             });
           }
-        } else {
+        }
+         else {
           if (!reg2.test(this.condition.flightNo.toUpperCase())) {
             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
@@ -417,7 +426,6 @@ export default {
         });
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      debugger;
         if (columnIndex === 0) {
          // if (rowIndex % 2 === 0) {
             return {
