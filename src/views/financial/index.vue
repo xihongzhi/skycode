@@ -4,6 +4,7 @@
       <el-row>
         <label  class="postInfo-container-item">始发机场:</label>
         <el-input v-model="condition.dep" style="width: 120px;" class="filter-item"/>
+        <el-button class="filter-item" type="primary"  @click="getTrade">转</el-button>
         <label class="postInfo-container-item">到达机场:</label>
         <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
         <label class="postInfo-container-item">航班号:</label>
@@ -15,6 +16,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
+           @change="dataSearch"
           style="width: 230px;"
         ></el-date-picker>
         <el-button class="filter-item" type="primary"  icon="el-icon-search" @click="getList">查询</el-button>
@@ -138,6 +140,19 @@ export default {
       }
       return h + ":" + m;
     },
+    getTrade(){
+      let temp=this.condition.dep;
+      this.condition.dep=this.condition.arr;
+      this.condition.arr=temp;
+    },
+    dataSearch(){
+      debugger;
+      var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
+      var twoTime = new Date().setTime(new Date(this.time[1]).getTime());
+      if( oneTime + 3600 * 1000 * 24 * 31 < twoTime){
+           this.$message({message: "时间间隔不能大于31天",type: "warning"});
+      }
+    },
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
@@ -178,6 +193,15 @@ export default {
             swal({ title: "提示", text: "航班号必须为六位字符" });
             return false;
           }
+        }
+        this.condition.flightNo.toUpperCase();
+      }
+       if(this.time){
+        var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
+        var twoTime = new Date().setTime(new Date(this.time[1]).getTime());
+        if( oneTime + 3600 * 1000 * 24 * 31 < twoTime){
+            this.$message({message: "时间间隔不能大于31天",type: "warning"});
+            return false;
         }
       }
       return true;

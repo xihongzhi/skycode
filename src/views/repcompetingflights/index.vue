@@ -3,6 +3,8 @@
     <div class="filter-container" style="margin-top: 0px;">
       <label  class="postInfo-container-item">始发机场:</label>
       <el-input v-model="condition.dep" style="width: 120px;" class="filter-item"/>
+      <el-button class="filter-item" type="primary" @click="getTrade">转</el-button>
+
       <label class="postInfo-container-item">到达机场:</label>
       <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
@@ -22,6 +24,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
+           @change="dataSearch"
           style="width: 230px;"
         ></el-date-picker>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
@@ -48,7 +51,7 @@
       <el-table-column fixed align="center" label="航段" min-width="100">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="旅行日期" min-width="80">
+      <el-table-column fixed align="center" label="航班日期" min-width="80">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
       <el-table-column fixed align="center" label="起飞时间" min-width="80">
@@ -56,6 +59,26 @@
       </el-table-column>
       <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
       <el-table-column fixed prop="layout" align="center" label="布局" min-width="60"></el-table-column>
+       <el-table-column fixed label="销售数" align="center" min-width="245" >
+        <el-table-column  fixed align="center" label="客座率" min-width="80">
+           <template slot-scope="scope">
+             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate.toFixed(3)}}</el-button>
+            </template> 
+        </el-table-column>
+        <el-table-column fixed prop="passagerNumber" align="center" label="人数" min-width="60"></el-table-column>
+        <el-table-column fixed prop="grabCrowRateTime" align="center" label="采集时间" min-width="95"></el-table-column>
+      </el-table-column>
+      <el-table-column fixed label="CTRIP" align="center"  min-width="245" >
+      <!-- <el-table-column fixed label="CTRIP" align="center"  min-width="310" > -->
+        <el-table-column fixed align="center" label="最低价" min-width="80">
+           <template slot-scope="scope">
+             <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.lowestPrice}}</el-button>
+            </template> 
+        </el-table-column>
+        <el-table-column  fixed prop="lowestPriceChange" align="center" label="价格变化" min-width="80"></el-table-column>
+         <el-table-column fixed prop="grabLowestPriceTime" align="center" label="采集时间" min-width="95"></el-table-column>
+        <!-- <el-table-column fixed prop="grabLowestPriceTime" align="center" label="采集时间" min-width="160"></el-table-column> -->
+      </el-table-column>
       <el-table-column align="center" label="上客速度">
         <el-table-column prop="d0" align="center" label="0" min-width="60"></el-table-column>
         <el-table-column prop="d1" align="center" label="1" min-width="60"></el-table-column>
@@ -68,24 +91,8 @@
         <el-table-column prop="dOut" align="center" label="7+" min-width="60"></el-table-column>
       </el-table-column>
       <!-- <el-table-column :label="this.condition.flightDate" align="center"> -->
-      <el-table-column label="CTRIP" align="center">
-        <el-table-column align="center" label="最低价" min-width="80">
-           <template slot-scope="scope">
-             <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.lowestPrice}}</el-button>
-            </template> 
-        </el-table-column>
-        <el-table-column prop="lowestPriceChange" align="center" label="价格变化" min-width="80"></el-table-column>
-        <el-table-column prop="grabLowestPriceTime" align="center" label="采集时间" min-width="90"></el-table-column>
-      </el-table-column>
-      <el-table-column label="销售数" align="center">
-        <el-table-column  align="center" label="客座率" min-width="80">
-           <template slot-scope="scope">
-             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate}}</el-button>
-            </template> 
-        </el-table-column>
-        <el-table-column prop="passagerNumber" align="center" label="人数" min-width="60"></el-table-column>
-        <el-table-column prop="grabCrowRateTime" align="center" label="采集时间" min-width="90"></el-table-column>
-      </el-table-column>
+
+     
         <div slot="empty">
           <p>
             <label/>
@@ -185,7 +192,7 @@ export default {
       total: 0,
       listLoading: false,
       downloadLoading: false,
-      time: [new Date().setDate(new Date().getDate()-1), new Date().setDate(new Date().getDate()-1)],
+      time: [new Date().setDate(new Date().getDate()), new Date().setDate(new Date().getDate())],
       condition: {
         pageIndex: 1,
         pageSize: 10,
@@ -327,7 +334,19 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
-
+    getTrade(){
+      let temp=this.condition.dep;
+      this.condition.dep=this.condition.arr;
+      this.condition.arr=temp;
+    },
+   dataSearch(){
+      debugger;
+      var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
+      var twoTime = new Date().setTime(new Date(this.time[1]).getTime());
+      if( oneTime + 3600 * 1000 * 24 * 31 < twoTime){
+           this.$message({message: "时间间隔不能大于31天",type: "warning"});
+      }
+    },
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
       let reg2 = new RegExp("^[A-Z0-9]{6}$");
@@ -381,17 +400,22 @@ export default {
             });
           }
         }
-         else {
+        else {
           if (!reg2.test(this.condition.flightNo.toUpperCase())) {
             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
         }
+        this.condition.flightNo.toUpperCase();
       }
-      // if (!this.condition.flightDate) {
-      //    this.$message({message: "请选择日期",type: "warning"});
-      //     return false;
-      //  }
+      if(this.time){
+        var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
+        var twoTime = new Date().setTime(new Date(this.time[1]).getTime());
+        if( oneTime + 3600 * 1000 * 24 * 31 < twoTime){
+            this.$message({message: "时间间隔不能大于31天",type: "warning"});
+            return false;
+        }
+      }
       return true;
     },
 
@@ -405,6 +429,7 @@ export default {
         o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
         o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
       }
+      
       debugger;
       RepCompetingFlights(o)
         .then(response => {

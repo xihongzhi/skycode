@@ -3,6 +3,7 @@
     <div class="filter-container" style=" margin-top: 0px;">
       <label  class="postInfo-container-item">始发城市:</label>
       <el-input v-model="condition.dep" style="width: 120px;" class="filter-item"/>
+      <el-button class="filter-item" type="primary"  @click="getTrade">转</el-button>
       <label class="postInfo-container-item">目的城市:</label>
       <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
@@ -16,12 +17,13 @@
         placeholder="选择日期"
         style="width:150px"
       ></el-date-picker> -->
-      <el-date-picker
+         <el-date-picker
           type="daterange"
           v-model="time"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
+           @change="dataSearch"
           style="width: 230px;"
         ></el-date-picker>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
@@ -55,7 +57,7 @@
         <el-table-column fixed align="center" label="起飞时间" min-width="80">
           <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
         </el-table-column>
-        <el-table-column prop="flightstyle" align="center" label="机型" min-width="80"></el-table-column>
+        <el-table-column prop="flightstyle" align="center" label="机型" min-width="90"></el-table-column>
         <el-table-column prop="flightTime" align="center" label="飞行时间" min-width="80"></el-table-column>
         <el-table-column prop="flightDistance" align="center" label="公里数" min-width="70"></el-table-column>
         <el-table-column prop="passagerCount" align="center" label="乘客人数" min-width="80"></el-table-column>
@@ -162,6 +164,7 @@ export default {
       detailtableData: null,
       detailtotal: 0,
     };
+
   },
   mounted() {
     //this.getList();
@@ -201,6 +204,19 @@ export default {
       m = minutes;
       }
       return h + ":" + m;
+    },
+    getTrade(){
+      let temp=this.condition.dep;
+      this.condition.dep=this.condition.arr;
+      this.condition.arr=temp;
+    },
+    dataSearch(){
+      debugger;
+      var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
+      var twoTime = new Date().setTime(new Date(this.time[1]).getTime());
+      if( oneTime + 3600 * 1000 * 24 * 31 < twoTime){
+           this.$message({message: "时间间隔不能大于31天",type: "warning"});
+      }
     },
     validate() {
       let reg1 = new RegExp("^[A-Z]{3}$");
@@ -248,6 +264,15 @@ export default {
             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
+        }
+        this.condition.flightNo.toUpperCase();
+      }
+      if(this.time){
+        var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
+        var twoTime = new Date().setTime(new Date(this.time[1]).getTime());
+        if( oneTime + 3600 * 1000 * 24 * 31 < twoTime){
+            this.$message({message: "时间间隔不能大于31天",type: "warning"});
+            return false;
         }
       }
       return true;
