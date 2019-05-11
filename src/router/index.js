@@ -92,15 +92,39 @@ export const constantRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/financial',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/financial/index'),
+  //       name: '未来航班销售监控',
+  //       meta: { title: '未来航班销售监控', icon: 'link' }
+  //     }
+  //   ]
+  // },
   {
-    path: '/financial',
+    path: '/lowestprice',
     component: Layout,
     children: [
       {
         path: 'index',
-        component: () => import('@/views/financial/index'),
-        name: '未来航班销售监控',
-        meta: { title: '未来航班销售监控', icon: 'link' }
+        component: () => import('@/views/lowestprice/index'),
+        name: '航班OTA价格查询',
+        meta: { title: '航班OTA价格查询', icon: 'link' }
+      }
+    ]
+  },
+  {
+    path: '/crowrate',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/crowrate/index'),
+        name: '航班客座率查询',
+        meta: { title: '航班客座率查询', icon: 'list' }
       }
     ]
   },

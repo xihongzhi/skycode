@@ -15,6 +15,27 @@ export function RepCompetingFlights(data) {
       data
     })
   }
+
+    //最低价
+    export function LowestPrice(data) {
+      return request({
+        url: '/api/LowestPrice',
+        method: 'post',
+        data
+      })
+    }
+
+        //客座率
+export function CrowRate(data) {
+  return request({
+    url: '/api/CrowRate',
+    method: 'post',
+    data
+  })
+}
+
+
+
   //客座率当天抓取明细
   export function CrowRateSameDayDetail(data) {
     return request({

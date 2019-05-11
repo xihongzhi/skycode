@@ -3,12 +3,12 @@
     <div class="filter-container" style=" margin-top: 0px;">
       <label  class="postInfo-container-item">始发城市:</label>
       <el-input v-model="condition.dep" style="width: 120px;" class="filter-item"/>
-      <el-button class="filter-item" type="primary"  @click="getTrade">转</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-sort" style="-webkit-transform: rotate(90deg); transform: rotate(90 deg);padding:5px; height:40px;width:35px" @click="getTrade"></el-button>
       <label class="postInfo-container-item">目的城市:</label>
       <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
       <el-input v-model="condition.flightNo" style="width: 120px;" class="filter-item"/>
-      <label class="postInfo-container-item">旅行日期:</label>
+      <label class="postInfo-container-item">日期:</label>
       <!-- <el-date-picker
         v-model="condition.flightDate"
         type="date"
@@ -26,7 +26,7 @@
            @change="dataSearch"
           style="width: 230px;"
         ></el-date-picker>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search"  @click="getList">查询</el-button>
       <el-button
         :loading="downloadLoading"
         class="filter-item"

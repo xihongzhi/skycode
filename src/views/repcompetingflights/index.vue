@@ -1,23 +1,17 @@
 <template>
   <div class="app-container">
     <div class="filter-container" style="margin-top: 0px;">
+   <el-row>
       <label  class="postInfo-container-item">始发机场:</label>
+    
       <el-input v-model="condition.dep" style="width: 120px;" class="filter-item"/>
-      <el-button class="filter-item" type="primary" @click="getTrade">转</el-button>
+      <el-button class="filter-item" type="primary"  icon="el-icon-sort" style="-webkit-transform: rotate(90deg); transform: rotate(90 deg); padding:2px; height:40px;width:35px" @click="getTrade"></el-button>
 
       <label class="postInfo-container-item">到达机场:</label>
       <el-input v-model="condition.arr" style="width: 120px;" class="filter-item"/>
       <label class="postInfo-container-item">航班号:</label>
       <el-input v-model="condition.flightNo" style="width: 120px;" class="filter-item"/>
       <label class="postInfo-container-item">日期:</label>
-      <!-- <el-date-picker
-        v-model="condition.flightDate"
-        type="date"
-        value-format=" yyyy-MM-dd"
-        format="yyyy-MM-dd"
-        placeholder="选择日期"
-        style="width:150px"
-      ></el-date-picker> -->
         <el-date-picker
           type="daterange"
           v-model="time"
@@ -35,6 +29,7 @@
         icon="el-icon-download"
         @click="outElsx"
       >导出</el-button>
+         </el-row>
     </div>
     <el-table
       :data="tableData"
