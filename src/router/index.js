@@ -65,6 +65,19 @@ export const constantRoutes = [
     component: () => import('@/views/errorPage/401'),
     hidden: true
   },
+  // {
+  //   path: '',
+  //   component: Layout,
+  //   redirect: 'dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: 'Dashboard',
+  //       meta: { title: 'dashboard', icon: 'dashboard', noCache: true, affix: true }
+  //     }
+  //   ]
+  // },
   {
     path: '',
     component: Layout,
@@ -72,13 +85,24 @@ export const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/repflightflyincome/index'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: true, affix: true }
+        meta: { title: '承运航班收入数据', icon: 'dashboard', noCache: true, affix: true }
       }
     ]
   },
-  
+  // {
+  //   path: '/repflyincome',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/repflightflyincome/index'),
+  //       name: '承运航班收入数据',
+  //       meta: { title: '承运航班收入数据', icon: 'guide'}
+  //     }
+  //   ]
+  // },
 
   {
     path: '/repcompeting',
@@ -92,18 +116,18 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/financial',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/financial/index'),
-  //       name: '未来航班销售监控',
-  //       meta: { title: '未来航班销售监控', icon: 'link' }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/financial',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/financial/index'),
+        name: '未来航班销售监控',
+        meta: { title: '未来航班销售监控', icon: 'guide' }
+      }
+    ]
+  },
   {
     path: '/lowestprice',
     component: Layout,
@@ -128,18 +152,18 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/repflyincome',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/repflightflyincome/index'),
-        name: '承运航班收入数据',
-        meta: { title: '承运航班收入数据', icon: 'guide'}
-      }
-    ]
-  },
+  // {
+  //   path: '/repflyincome',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/repflightflyincome/index'),
+  //       name: '承运航班收入数据',
+  //       meta: { title: '承运航班收入数据', icon: 'guide'}
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/documentation',
   //   component: Layout,

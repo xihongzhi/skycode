@@ -29,6 +29,7 @@
         icon="el-icon-download"
         @click="outElsx"
       >导出</el-button>
+      <!-- <a :href="outElsx()">导出</a> -->
          </el-row>
     </div>
     <el-table
@@ -53,11 +54,15 @@
         <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
       </el-table-column>
       <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
-      <el-table-column fixed prop="layout" align="center" label="布局" min-width="60"></el-table-column>
-       <el-table-column fixed label="销售数" align="center" min-width="245" >
-        <el-table-column  fixed align="center" label="客座率" min-width="80">
+      <el-table-column fixed align="center" label="布局" min-width="60">
+         <template slot-scope="scope">
+             <el-button type="text" size="small">{{scope.row.layout==0?'-':scope.row.crowRate}}</el-button>
+            </template> 
+      </el-table-column>
+      <el-table-column fixed label="销售数" align="center" min-width="245" >
+      <el-table-column  fixed align="center" label="客座率" min-width="80">
            <template slot-scope="scope">
-             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate.toFixed(3)}}</el-button>
+             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate==null?'':scope.row.crowRate.toFixed(3)}}</el-button>
             </template> 
         </el-table-column>
         <el-table-column fixed prop="passagerNumber" align="center" label="人数" min-width="60"></el-table-column>
@@ -108,7 +113,6 @@
       <div class="table-responsive">
         <el-table
           :data="detailtableData"
-          :span-method="objectSpanMethod"
           v-loading="detaillistLoading"
            border
           fit
@@ -142,7 +146,6 @@
       <div class="table-responsive">
         <el-table
           :data="grabResultData"
-          :span-method="objectSpanMethod"
           v-loading="grabResultLoading"
           border
           fit
@@ -174,7 +177,7 @@
 
 <script>
 import Pagination from "@/components/Pagination";
-import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail } from "@/api/ajax.js";
+import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail,RepCompetingFlightsExcel } from "@/api/ajax.js";
 import { parseTime,deepClone } from "@/utils";
 import { formatDate } from '@/utils/datefarmate'
 export default {
@@ -359,10 +362,6 @@ export default {
         }
         this.condition.dep.toUpperCase();
       }
-      // else{
-      //    this.$message({message: "请输入始发机场",type: "warning"});
-      //     return false;
-      // }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
           this.$message({ message: "目的机场必须为三字符", type: "warning" });
@@ -370,38 +369,27 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-      // else{
-      //    this.$message({message: "请输入到达机场",type: "warning"});
-      //     return false;
-      // }
-      if (this.condition.flightNo) {
-        if (this.condition.flightNo.indexOf(";") === "-1") {
-          let strs = this.condition.flightNo.split(";");
+      if (this.condition.flightNO) {
+        if (this.condition.flightNO.indexOf(";") != -1) {
+          let strs = this.condition.flightNO.split(";");
           if (strs.length > 6) {
-            this.$message({
-              message: "最多只能航班号填六组航班号",
-              type: "warning"
-            });
+               this.$message({ message: "最多只能航班号填六组航班号", type: "warning" });
             return false;
           } else {
             strs.forEach(item => {
-              if (!reg2.test(item.flightNo.toUpperCase())) {
-                this.$message({
-                  message: "航班号必须为六位字符",
-                  type: "warning"
-                });
+              if (!reg2.test(item)) {
+                this.$message({ message: "航班号必须为六位字符", type: "warning" });
                 return false;
               }
             });
           }
-        }
-        else {
-          if (!reg2.test(this.condition.flightNo.toUpperCase())) {
-            this.$message({ message: "航班号必须为六位字符", type: "warning" });
+        } else {
+          if (!reg2.test(this.condition.flightNO)) {
+             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
         }
-        this.condition.flightNo.toUpperCase();
+        this.condition.flightNo;
       }
       if(this.time){
         var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
@@ -424,13 +412,10 @@ export default {
         o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
         o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
       }
-      
-      debugger;
       RepCompetingFlights(o)
         .then(response => {
           if (response.data.code == "0") {
             this.tableData = response.data.data;
-            debugger;
             this.total = response.data.count;
           } else {
             this.tableData = [];
@@ -445,21 +430,43 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-        if (columnIndex === 0) {
-         // if (rowIndex % 2 === 0) {
-            return {
-              rowspan: 1,
-              colspan: 1
-            };
-          // } else {
-          //   return {
-          //     rowspan: 0,
-          //     colspan: 0
-          //   };
-          // }
-        }
-    },
+    // outElsx() {
+    //   if (!this.validate()) {
+    //     return;
+    //   }
+      // let t = this, o = t.condition;
+      // if (t.time && t.time.length) {
+      //   o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+      //   o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+      // }
+      // let url = 'http://152.136.36.77:3000/api/RepCompetingFlights/excel?';
+      //   let params =o;
+      //   for (var [k, v] of Object.entries(params)) {
+
+      //     url+= k + "=" + v + "&";
+      //   };
+      // return url;
+      // RepCompetingFlightsExcel(o)
+      //   .then(response => {
+      //     if (response.data.code == "0") {
+      //        let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
+      //         var link = document.createElement("a");
+      //         link.href = uri;
+      //         link.download = "销售单.csv";
+      //         document.body.appendChild(link);
+      //         link.click();
+      //         document.body.removeChild(link);
+      //     } else {
+      //       this.$message({ message: "获取下载数据失败", type: "error" });
+      //     }
+      //     this.downloadLoading = false;
+      //   })
+      //   .catch(err => {
+      //     this.downloadLoading = false;
+      //     console.log(err);
+      //     this.$message({ message: "下载失败", type: "error" });
+      //   });
+    // },
     outElsx() {
       this.downloadLoading = true;
       let table = [];

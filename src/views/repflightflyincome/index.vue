@@ -34,6 +34,7 @@
         icon="el-icon-download"
         @click="outElsx"
       >导出</el-button>
+      <!-- <a :href="outElsx()"> 导出</a> -->
     </div>
     <div class="table-responsive">
       <el-table
@@ -132,7 +133,7 @@
 import Pagination from "@/components/Pagination";
 import { deepClone } from "@/utils";
 import { formatDate } from '@/utils/datefarmate'
-import { RepFlightflyIncome, RepFlightflyIncomeDetail } from "@/api/ajax.js";
+import { RepFlightflyIncome, RepFlightflyIncomeDetail,RepFlightflyIncomeExcel } from "@/api/ajax.js";
 export default {
   components: {
     Pagination
@@ -239,33 +240,27 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-      if (this.condition.flightNo) {
-        if (this.condition.flightNo.indexOf(";") === "-1") {
-          let strs = this.condition.flightNo.split(";");
+      if (this.condition.flightNO) {
+        if (this.condition.flightNO.indexOf(";") != -1) {
+          let strs = this.condition.flightNO.split(";");
           if (strs.length > 6) {
-            this.$message({
-              message: "最多只能航班号填六组航班号",
-              type: "warning"
-            });
+               this.$message({ message: "最多只能航班号填六组航班号", type: "warning" });
             return false;
           } else {
             strs.forEach(item => {
-              if (!reg2.test(item.flightNo.toUpperCase())) {
-                this.$message({
-                  message: "航班号必须为六位字符",
-                  type: "warning"
-                });
+              if (!reg2.test(item)) {
+                this.$message({ message: "航班号必须为六位字符", type: "warning" });
                 return false;
               }
             });
           }
         } else {
-          if (!reg2.test(this.condition.flightNo.toUpperCase())) {
-            this.$message({ message: "航班号必须为六位字符", type: "warning" });
+          if (!reg2.test(this.condition.flightNO)) {
+             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
         }
-        this.condition.flightNo.toUpperCase();
+        this.condition.flightNo;
       }
       if(this.time){
         var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
@@ -378,6 +373,45 @@ export default {
         })
       );
     },
+    // outElsx() {
+    //   debugger;
+    //   if (!this.validate()) {
+    //     return;
+    //   }
+    //   let t = this, o = t.condition;
+    //   if (t.time && t.time.length) {
+    //     o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+    //     o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+    //   }
+    //   let url = 'http://152.136.36.77:3000/api/RepFlightflyIncome/excel?';
+    //   let params =o;
+    //   for (var [k, v] of Object.entries(params)) {
+
+    //     url+= k + "=" + v + "&";
+    //   };
+    //  return url;
+      // RepFlightflyIncomeExcel(o)
+      //   .then(response => {
+      //     debugger;
+      //     if (response.data.code == "0") {
+      //        let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
+      //         var link = document.createElement("a");
+      //         link.href = uri;
+      //         link.download = "承运航班收入数据.csv";
+      //         document.body.appendChild(link);
+      //         link.click();
+      //         document.body.removeChild(link);
+      //     } else {
+      //       this.$message({ message: "获取下载数据失败", type: "error" });
+      //     }
+      //     this.downloadLoading = false;
+      //   })
+      //   .catch(err => {
+      //     this.downloadLoading = false;
+      //     console.log(err);
+      //     this.$message({ message: "下载失败", type: "error" });
+      //   });
+   // },
     handleClick(scope) {
       this.dialogVisible = true;
       let row = deepClone(scope.row);

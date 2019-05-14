@@ -68,3 +68,27 @@ export function RepFlightflyIncomeDetail(data) {
       data
     })
   }
+  //竞飞航班上客速度报表导出
+  export function RepCompetingFlightsExcel(query) {
+    return request({
+      url: '/api/RepCompetingFlights/excel',
+      method: 'get',
+      params: query
+    })
+  }
+    //-1天承运航班收入导出
+    export function RepFlightflyIncomeExcel(query) {
+      return request({
+        url: '/api/RepFlightflyIncome/excel',
+        method: 'get',
+        params: query
+      })
+    }
+    //未来航班上客速度报表导出
+  export function RepFutureFlightSellExcel(query) {
+    return request({
+      url: '/api/RepFutureFlightSell/excel',
+      method: 'get',
+      params: query
+    })
+  }

@@ -19,6 +19,18 @@
            @change="dataSearch"
           style="width: 230px;"
         ></el-date-picker>
+        </el-row>
+        <el-row>
+        <label class="postInfo-container-item">采集时间:</label>
+        <el-date-picker
+          type="daterange"
+          v-model="grabtime"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
+           @change="dataSearch"
+          style="width: 230px;"
+        ></el-date-picker>
         <el-button class="filter-item" type="primary"  icon="el-icon-search" @click="getList">查询</el-button>
         <el-button
           :loading="downloadLoading"
@@ -50,12 +62,14 @@
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
       <el-table-column fixed align="center" label="起飞时间" min-width="110">
-        <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
+        <template slot-scope="scope">{{timeFormat(scope.row.deptime)}}</template>
       </el-table-column>
 
       <el-table-column fixed prop="flightNo" align="center" label="航班号" min-width="110"></el-table-column>
-      <el-table-column fixed prop="layout" align="center" label="布局" min-width="110"></el-table-column>
-      <el-table-column prop="lowestPrice" align="center" label="价格" min-width="110"></el-table-column>
+      <!-- <el-table-column fixed prop="layout" align="center" label="布局" min-width="110"></el-table-column> -->
+      <el-table-column prop="price" align="center" label="价格" min-width="110"></el-table-column>
+      <el-table-column prop="grabTime" align="center" label="采集时间" min-width="150"></el-table-column>
+
       <!-- <el-table-column prop="lowestPriceChange" align="center" label="价格变化" min-width="110"></el-table-column>
       <el-table-column prop="crowRate" align="center" label="客座率" min-width="110"></el-table-column>
       <el-table-column prop="passengerChange" align="center" label="上客速度" min-width="100"></el-table-column> -->
@@ -79,7 +93,7 @@
 </template>
 <script>
 import Pagination from "@/components/Pagination";
-import { RepFutureFlightSell } from "@/api/ajax.js";
+import { LowestPrice  } from "@/api/ajax.js";
 import { formatDate} from '@/utils/datefarmate'
 export default {
   components: {
@@ -91,6 +105,7 @@ export default {
       downloadLoading: false,
       total: 0,
       time: [new Date(), new Date().setDate(new Date().getDate() + 15)],
+      grabtime: [new Date(), new Date()],
       condition: {
         pageIndex: 1,
         pageSize: 10,
@@ -162,39 +177,39 @@ export default {
       }
       if (this.condition.dep) {
         if (!reg1.test(this.condition.dep.toUpperCase())) {
-          swal({ title: "提示", text: "始发机场必须为三字符" });
+            this.$message({ message: "始发机场必须为三字符", type: "warning" });
           return false;
         }
         this.condition.dep.toUpperCase();
       }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
-          swal({ title: "提示", text: "目的机场必须为三字符" });
+           this.$message({ message: "目的机场必须为三字符", type: "warning" });
           return false;
         }
         this.condition.arr.toUpperCase();
       }
       if (this.condition.flightNO) {
-        if (this.condition.flightNO.indexOf(";") === "-1") {
+        if (this.condition.flightNO.indexOf(";") != -1) {
           let strs = this.condition.flightNO.split(";");
           if (strs.length > 6) {
-            swal({ title: "提示", text: "最多只能航班号填六组航班号" });
+               this.$message({ message: "最多只能航班号填六组航班号", type: "warning" });
             return false;
           } else {
             strs.forEach(item => {
-              if (!reg2.test(item.flightNO.toUpperCase())) {
-                swal({ title: "提示", text: "航班号必须为六位字符" });
+              if (!reg2.test(item)) {
+                this.$message({ message: "航班号必须为六位字符", type: "warning" });
                 return false;
               }
             });
           }
         } else {
-          if (!reg2.test(this.condition.flightNO.toUpperCase())) {
-            swal({ title: "提示", text: "航班号必须为六位字符" });
+          if (!reg2.test(this.condition.flightNO)) {
+             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
         }
-        this.condition.flightNo.toUpperCase();
+        this.condition.flightNo;
       }
        if(this.time){
         var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
@@ -211,13 +226,18 @@ export default {
       if (!this.validate()) {
         return;
       }
+      debugger;
       this.listLoading = true;
       let t = this, o = t.condition;
       if (t.time && t.time.length) {
         o["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
         o["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
       }
-      RepFutureFlightSell(o)
+      if (t.grabtime && t.grabtime.length) {
+        o["grabDateStart"] = formatDate(t["grabtime"][0], "yyyy-MM-dd")+" 00:00:00";
+        o["grabDateEnd"] = formatDate(t["grabtime"][1], "yyyy-MM-dd")+" 23:59:59";
+      }
+      LowestPrice(o)
         .then(response => {
           if (response.data.code == "0") {
             this.tableData = response.data.data;
@@ -279,9 +299,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "未来航班销售监控"
-          // autoWidth: this.autoWidth,
-          // bookType: this.bookType
+          filename: "航班最低价查询"
         });
         this.downloadLoading = false;
       });

@@ -27,6 +27,7 @@
           icon="el-icon-download"
           @click="outElsx"
         >导出</el-button>
+
       </el-row>
     </div>
     <el-table
@@ -40,7 +41,6 @@
       :cell-style="cellClass"
       height="420px"
       style="width: 100%"
-      
     >
       <!-- <el-table-column fixed prop="futureID" align="center" label="序号" width="100"></el-table-column> -->
       <el-table-column fixed align="center" label="日期" min-width="110">
@@ -79,7 +79,7 @@
 </template>
 <script>
 import Pagination from "@/components/Pagination";
-import { RepFutureFlightSell } from "@/api/ajax.js";
+import { RepFutureFlightSell,RepFutureFlightSellExcel } from "@/api/ajax.js";
 import { formatDate} from '@/utils/datefarmate'
 export default {
   components: {
@@ -162,39 +162,39 @@ export default {
       }
       if (this.condition.dep) {
         if (!reg1.test(this.condition.dep.toUpperCase())) {
-          swal({ title: "提示", text: "始发机场必须为三字符" });
+          this.$message({message: "始发机场必须为三字符",type: "warning"});
           return false;
         }
         this.condition.dep.toUpperCase();
       }
       if (this.condition.arr) {
         if (!reg1.test(this.condition.arr.toUpperCase())) {
-          swal({ title: "提示", text: "目的机场必须为三字符" });
+          this.$message({message: "目的机场必须为三字符",type: "warning"});
           return false;
         }
         this.condition.arr.toUpperCase();
       }
-      if (this.condition.flightNO) {
-        if (this.condition.flightNO.indexOf(";") === "-1") {
+       if (this.condition.flightNO) {
+        if (this.condition.flightNO.indexOf(";") != -1) {
           let strs = this.condition.flightNO.split(";");
           if (strs.length > 6) {
-            swal({ title: "提示", text: "最多只能航班号填六组航班号" });
+               this.$message({ message: "最多只能航班号填六组航班号", type: "warning" });
             return false;
           } else {
             strs.forEach(item => {
-              if (!reg2.test(item.flightNO.toUpperCase())) {
-                swal({ title: "提示", text: "航班号必须为六位字符" });
+              if (!reg2.test(item)) {
+                this.$message({ message: "航班号必须为六位字符", type: "warning" });
                 return false;
               }
             });
           }
         } else {
-          if (!reg2.test(this.condition.flightNO.toUpperCase())) {
-            swal({ title: "提示", text: "航班号必须为六位字符" });
+          if (!reg2.test(this.condition.flightNO)) {
+             this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
         }
-        this.condition.flightNo.toUpperCase();
+        this.condition.flightNo;
       }
        if(this.time){
         var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
@@ -235,56 +235,118 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
+    // outElsx() {
+    //   if (!this.validate()) {
+    //     return;
+    //   }
+    //   let t = this, o = t.condition;
+    //   if (t.time && t.time.length) {
+    //     o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+    //     o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+    //   }
+    //   let url = 'http://152.136.36.77:3000/api/RepFutureFlightSell/excel?';
+    //   let params =o;
+    //   for (var [k, v] of Object.entries(params)) {
 
+    //     url+= k + "=" + v + "&";
+    //   };
+    //  return url;
+      // RepFutureFlightSellExcel(o)
+      //   .then(response => {
+      //     if (response.data.code == "0") {
+      //        let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
+      //         var link = document.createElement("a");
+      //         link.href = uri;
+      //         link.download = "销售单.csv";
+      //         document.body.appendChild(link);
+      //         link.click();
+      //         document.body.removeChild(link);
+      //     } else {
+      //       this.$message({ message: "获取下载数据失败", type: "error" });
+      //     }
+      //     this.downloadLoading = false;
+      //   })
+      //   .catch(err => {
+      //     this.downloadLoading = false;
+      //     console.log(err);
+      //     this.$message({ message: "下载失败", type: "error" });
+      //   });
+    // },
     outElsx() {
-      this.downloadLoading = true;
-      let table = [];
-      this.tableData.forEach(element => {
-        element.aim = element.dep + "-" + element.arr;
-        if (element.flightDate) {
-          element.flightDate = this.dateFormat(element.flightDate);
+        if (!this.validate()) {
+          return;
         }
-        if (element.depTime) {
-          element.depTime = this.timeFormat(element.depTime);
+        debugger;
+        this.downloadLoading = true;
+        let t = this, o = t.condition;
+        if (t.time && t.time.length) {
+          o["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+          o["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
         }
-        table.push(element);
-      });
-      import("@/vendor/Export2Excel").then(excel => {
-        const tHeader = [
-          "日期",
-          "航段",
-          "起飞时间",
-          "航班号",
-          "布局",
-          "价格",
-          "价格变化",
-          "客座率",
-          "上客速递",
-          "入库日期"
-        ];
-        const filterVal = [
-          "flightDate",
-          "aim",
-          "depTime",
-          "flightNo",
-          "layout",
-          "lowestPrice",
-          "lowestPriceChange",
-          "crowRate",
-          "passengerChange",
-          "addTime"
-        ];
-        const list = table;
-        const data = this.formatJson(filterVal, list);
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: "未来航班销售监控"
-          // autoWidth: this.autoWidth,
-          // bookType: this.bookType
+        o.pageSize=50000;
+       RepFutureFlightSell(o)
+        .then(response => {
+          if (response.data.code == "0") {
+                let datas = response.data.data;
+                let table = [];
+                datas.forEach(element => {
+                element.aim = element.dep + "-" + element.arr;
+                if (element.flightDate) {
+                  element.flightDate = this.dateFormat(element.flightDate);
+                }
+                if (element.depTime) {
+                  element.depTime = this.timeFormat(element.depTime);
+                }
+                table.push(element);
+                });
+              import("@/vendor/Export2Excel").then(excel => {
+                const tHeader = [
+                  "日期",
+                  "航段",
+                  "起飞时间",
+                  "航班号",
+                  "布局",
+                  "价格",
+                  "价格变化",
+                  "客座率",
+                  "上客速递",
+                  "入库日期"
+                ];
+              const filterVal = [
+                "flightDate",
+                "aim",
+                "depTime",
+                "flightNo",
+                "layout",
+                "lowestPrice",
+                "lowestPriceChange",
+                "crowRate",
+                "passengerChange",
+                "addTime"
+              ];
+              const list = table;
+              const data = this.formatJson(filterVal, list);
+              excel.export_json_to_excel({
+                header: tHeader,
+                data,
+                filename: "未来航班销售监控"
+                // autoWidth: this.autoWidth,
+                // bookType: this.bookType
+              });
+             
+              this.downloadLoading = false;
+            });
+          } else {
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+           o.pageSize=10;
+          this.downloadLoading = false;
+        })
+        .catch(err => {
+          this.downloadLoading = false;
+          console.log(err);
+          this.$message({ message: "获取列表失败", type: "error" });
         });
-        this.downloadLoading = false;
-      });
     },
     formatJson(filterVal, jsonData) {
       debugger;
