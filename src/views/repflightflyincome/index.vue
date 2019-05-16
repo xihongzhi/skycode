@@ -303,14 +303,49 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
-    outElsx() {
+     outElsx() {
+      if (!this.validate()) {
+        return;
+      }
+      debugger;
       this.downloadLoading = true;
+      let params={};
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        params["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+        params["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+        
+      }
+      params.dep=o.dep;
+      params.arr=o.arr;
+      params.flightNO=o.flightNO;
+      params.pageIndex=1;
+      params.pageSize=50000;
+      RepFlightflyIncome(params)
+        .then(response => {
+          if (response.data.code == "0") {
+            let datas= response.data.data;
+            this.exportData(datas);
+          } else {
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+          this.downloadLoading = false;
+        })
+        .catch(err => {
+          this.downloadLoading = false;
+          console.log(err);
+          this.$message({ message: "获取列表失败", type: "error" });
+        });
+    },
+    exportData(datas) {
       let table = [];
-      this.tableData.forEach(element => {
+      datas.forEach(element => {
         if (element.flightDate) {
           element.flightDate = this.dateFormat(element.flightDate);
-          element.depTime = this.timeFormat(element.flightDate);
         }
+         if (element.depTime) {
+            element.depTime = this.timeFormat(element.depTime);
+         }
         table.push(element);
       });
       import("@/vendor/Export2Excel").then(excel => {

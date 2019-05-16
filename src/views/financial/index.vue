@@ -244,33 +244,33 @@ export default {
     //     o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
     //     o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
     //   }
-    //   let url = 'http://152.136.36.77:3000/api/RepFutureFlightSell/excel?';
-    //   let params =o;
-    //   for (var [k, v] of Object.entries(params)) {
+    // //   let url = 'http://152.136.36.77:3000/api/RepFutureFlightSell/excel?';
+    // //   let params =o;
+    // //   for (var [k, v] of Object.entries(params)) {
 
-    //     url+= k + "=" + v + "&";
-    //   };
-    //  return url;
-      // RepFutureFlightSellExcel(o)
-      //   .then(response => {
-      //     if (response.data.code == "0") {
-      //        let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
-      //         var link = document.createElement("a");
-      //         link.href = uri;
-      //         link.download = "销售单.csv";
-      //         document.body.appendChild(link);
-      //         link.click();
-      //         document.body.removeChild(link);
-      //     } else {
-      //       this.$message({ message: "获取下载数据失败", type: "error" });
-      //     }
-      //     this.downloadLoading = false;
-      //   })
-      //   .catch(err => {
-      //     this.downloadLoading = false;
-      //     console.log(err);
-      //     this.$message({ message: "下载失败", type: "error" });
-      //   });
+    // //     url+= k + "=" + v + "&";
+    // //   };
+    // //  return url;
+    //   RepFutureFlightSellExcel(o)
+    //     .then(response => {
+    //       if (response.data.code == "0") {
+    //          let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
+    //           var link = document.createElement("a");
+    //           link.href = uri;
+    //           link.download = "销售单.csv";
+    //           document.body.appendChild(link);
+    //           link.click();
+    //           document.body.removeChild(link);
+    //       } else {
+    //         this.$message({ message: "获取下载数据失败", type: "error" });
+    //       }
+    //       this.downloadLoading = false;
+    //     })
+    //     .catch(err => {
+    //       this.downloadLoading = false;
+    //       console.log(err);
+    //       this.$message({ message: "下载失败", type: "error" });
+    //     });
     // },
     outElsx() {
         if (!this.validate()) {
@@ -278,13 +278,21 @@ export default {
         }
         debugger;
         this.downloadLoading = true;
-        let t = this, o = t.condition;
-        if (t.time && t.time.length) {
-          o["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
-          o["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
-        }
-        o.pageSize=50000;
-       RepFutureFlightSell(o)
+
+      let params={};
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        params["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+        params["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+        
+      }
+   
+      params.dep=o.dep;
+      params.arr=o.arr;
+      params.flightNO=o.flightNO;
+      params.pageIndex=1;
+      params.pageSize=50000;
+       RepFutureFlightSell(params)
         .then(response => {
           if (response.data.code == "0") {
                 let datas = response.data.data;
@@ -356,7 +364,7 @@ export default {
         })
       );
     }
-  }
+   }
 };
 </script>
 <style>

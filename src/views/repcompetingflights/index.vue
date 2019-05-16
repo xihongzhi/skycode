@@ -55,9 +55,7 @@
       </el-table-column>
       <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
       <el-table-column fixed align="center" label="布局" min-width="60">
-         <template slot-scope="scope">
-             <el-button type="text" size="small">{{scope.row.layout==0?'-':scope.row.crowRate}}</el-button>
-            </template> 
+         <template slot-scope="scope">{{scope.row.layout==0?'-':scope.row.layout}}</template> 
       </el-table-column>
       <el-table-column fixed label="销售数" align="center" min-width="245" >
       <el-table-column  fixed align="center" label="客座率" min-width="80">
@@ -369,9 +367,9 @@ export default {
         }
         this.condition.arr.toUpperCase();
       }
-      if (this.condition.flightNO) {
-        if (this.condition.flightNO.indexOf(";") != -1) {
-          let strs = this.condition.flightNO.split(";");
+      if (this.condition.flightNo) {
+        if (this.condition.flightNo.indexOf(";") != -1) {
+          let strs = this.condition.flightNo.split(";");
           if (strs.length > 6) {
                this.$message({ message: "最多只能航班号填六组航班号", type: "warning" });
             return false;
@@ -384,7 +382,7 @@ export default {
             });
           }
         } else {
-          if (!reg2.test(this.condition.flightNO)) {
+          if (!reg2.test(this.condition.flightNo)) {
              this.$message({ message: "航班号必须为六位字符", type: "warning" });
             return false;
           }
@@ -434,44 +432,81 @@ export default {
     //   if (!this.validate()) {
     //     return;
     //   }
-      // let t = this, o = t.condition;
-      // if (t.time && t.time.length) {
-      //   o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
-      //   o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
-      // }
-      // let url = 'http://152.136.36.77:3000/api/RepCompetingFlights/excel?';
-      //   let params =o;
-      //   for (var [k, v] of Object.entries(params)) {
+    //   let t = this, o = t.condition;
+    //   if (t.time && t.time.length) {
+    //     o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+    //     o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+    //   }
+    //   debugger;
+    //   // let url = 'http://152.136.36.77:3000/api/RepCompetingFlights/excel?';
+    //   //   let params =o;
+    //   //   for (var [k, v] of Object.entries(params)) {
 
-      //     url+= k + "=" + v + "&";
-      //   };
-      // return url;
-      // RepCompetingFlightsExcel(o)
-      //   .then(response => {
-      //     if (response.data.code == "0") {
-      //        let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
-      //         var link = document.createElement("a");
-      //         link.href = uri;
-      //         link.download = "销售单.csv";
-      //         document.body.appendChild(link);
-      //         link.click();
-      //         document.body.removeChild(link);
-      //     } else {
-      //       this.$message({ message: "获取下载数据失败", type: "error" });
-      //     }
-      //     this.downloadLoading = false;
-      //   })
-      //   .catch(err => {
-      //     this.downloadLoading = false;
-      //     console.log(err);
-      //     this.$message({ message: "下载失败", type: "error" });
-      //   });
+    //   //     url+= k + "=" + v + "&";
+    //   //   };
+    //   // return url;
+    //   RepCompetingFlightsExcel(o)
+    //     .then(response => {
+    //       debugger;
+    //       if (response.data.code == "0") {
+    //          let uri = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(response.data);
+    //           var link = document.createElement("a");
+    //           link.href = uri;
+    //           link.download = "销售单.csv";
+    //           document.body.appendChild(link);
+    //           link.click();
+    //           document.body.removeChild(link);
+    //       } else {
+    //         this.$message({ message: "获取下载数据失败", type: "error" });
+    //       }
+    //       this.downloadLoading = false;
+    //     })
+    //     .catch(err => {
+    //       this.downloadLoading = false;
+    //       console.log(err);
+    //       this.$message({ message: "下载失败", type: "error" });
+    //     });
     // },
     outElsx() {
+      if (!this.validate()) {
+        return;
+      }
       this.downloadLoading = true;
+
+         let params={};
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        params["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
+        params["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+        
+      }
+   
+      params.dep=o.dep;
+      params.arr=o.arr;
+      params.flightNo=o.flightNo;
+      params.pageIndex=1;
+      params.pageSize=50000;
+
+
+      RepCompetingFlights(params)
+        .then(response => {
+          if (response.data.code == "0") {
+           let datas= response.data.data;
+           this.exportData(datas);
+          } else {
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+          this.downloadLoading = false;
+        })
+        .catch(err => {
+          this.downloadLoading = false;
+          console.log(err);
+          this.$message({ message: "获取列表失败", type: "error" });
+        });
+    },
+    exportData(datas) {
       let table = [];
-      this.tableData.forEach(element => {
-        debugger
+      datas.forEach(element => {
         element.aim = element.dep + "-" + element.dep;
         table.push(element);
       });
@@ -483,6 +518,12 @@ export default {
             "起飞时间",
             "航班号",
             "布局",
+            "销售数",
+            "",
+            "",
+           "CTRIP",
+            "",
+            "",
             "上客速度",
             "",
             "",
@@ -491,13 +532,8 @@ export default {
             "",
             "",
             "",
-            "",
-            "CTRIP",
-            "",
-            "",
-            "销售数",
-            "",
             ""
+           
           ]
         ];
         const header = [
@@ -506,6 +542,12 @@ export default {
           "",
           "",
           "",
+          "客座率",
+          "人数",
+          "采集时间",
+           "最低价",
+          "价格变化",
+          "采集时间",
           "0",
           "1",
           "2",
@@ -514,13 +556,9 @@ export default {
           "5",
           "6",
           "7",
-          "7+",
-          "最低价",
-          "价格变化",
-          "采集时间",
-          "客座率",
-          "人数",
-          "采集时间"
+          "7+"
+         
+          
         ];
         const filterVal = [
           "aim",
@@ -528,6 +566,12 @@ export default {
           "depTime",
           "flightNO",
           "layout",
+           "crowRate",
+          "passagerNumber",
+          "grabCrowRateTime",
+           "lowestPrice",
+          "lowestPriceChange",
+          "grabLowestPriceTime",
           "d0",
           "d1",
           "d2",
@@ -536,17 +580,11 @@ export default {
           "d5",
           "d6",
           "d7",
-          "dOut",
-          "lowestPrice",
-          "lowestPriceChange",
-          "grabLowestPriceTime",
-          "crowRate",
-          "passagerNumber",
-          "grabCrowRateTime"
+          "dOut"
         ];
         const list = table;
         const data = this.formatJson(filterVal, list);
-        const merges = ["A1:A2", "B1:B2", "C1:C2", "D1:D2","E1:E2", "F1:N1", "O1:Q1","R1:T1"];
+        const merges = ["A1:A2", "B1:B2", "C1:C2", "D1:D2","E1:E2", "F1:H1", "I1:K1","L1:T1"];
         excel.export_json_to_excel({
           multiHeader,
           header,

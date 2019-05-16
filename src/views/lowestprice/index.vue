@@ -230,8 +230,8 @@ export default {
       this.listLoading = true;
       let t = this, o = t.condition;
       if (t.time && t.time.length) {
-        o["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
-        o["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+        o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd");
+        o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd");
       }
       if (t.grabtime && t.grabtime.length) {
         o["grabDateStart"] = formatDate(t["grabtime"][0], "yyyy-MM-dd")+" 00:00:00";
@@ -255,17 +255,52 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
-
     outElsx() {
+      if (!this.validate()) {
+        return;
+      }
+      debugger;
       this.downloadLoading = true;
+      let params={};
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        params["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd");
+        params["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd");
+      }
+     if (t.grabtime && t.grabtime.length) {
+        params["grabDateStart"] = formatDate(t["grabtime"][0], "yyyy-MM-dd")+" 00:00:00";
+        params["grabDateEnd"] = formatDate(t["grabtime"][1], "yyyy-MM-dd")+" 23:59:59";
+      }
+      params.dep=o.dep;
+      params.arr=o.arr;
+      params.flightNO=o.flightNO;
+      params.pageIndex=1;
+      params.pageSize=50000;
+      LowestPrice(params)
+        .then(response => {
+          if (response.data.code == "0") {
+            let datas= response.data.data;
+            this.exportData(datas);
+          } else {
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+          this.downloadLoading = false;
+        })
+        .catch(err => {
+          this.downloadLoading = false;
+          console.log(err);
+          this.$message({ message: "获取列表失败", type: "error" });
+        });
+    },
+    exportData(datas) {
       let table = [];
-      this.tableData.forEach(element => {
+      datas.forEach(element => {
         element.aim = element.dep + "-" + element.arr;
         if (element.flightDate) {
           element.flightDate = this.dateFormat(element.flightDate);
         }
-        if (element.depTime) {
-          element.depTime = this.timeFormat(element.depTime);
+        if (element.deptime) {
+          element.deptime = this.timeFormat(element.deptime);
         }
         table.push(element);
       });
@@ -275,31 +310,24 @@ export default {
           "航段",
           "起飞时间",
           "航班号",
-          "布局",
           "价格",
-          "价格变化",
-          "客座率",
-          "上客速递",
-          "入库日期"
+          "采集时间"
         ];
         const filterVal = [
           "flightDate",
           "aim",
-          "depTime",
+          "deptime",
           "flightNo",
-          "layout",
-          "lowestPrice",
-          "lowestPriceChange",
-          "crowRate",
-          "passengerChange",
-          "addTime"
+          "price",
+          "grabTime",
+
         ];
         const list = table;
         const data = this.formatJson(filterVal, list);
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "航班最低价查询"
+          filename: "航班OTA价格查询"
         });
         this.downloadLoading = false;
       });

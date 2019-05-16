@@ -68,7 +68,7 @@
       <el-table-column fixed prop="flightNo" align="center" label="航班号" min-width="110"></el-table-column>
       <el-table-column fixed prop="layout" align="center" label="布局" min-width="110"></el-table-column>
       <el-table-column prop="kezuoRate" align="center" label="客座率" min-width="110"></el-table-column>
-      <el-table-column prop="grabTime" align="addtime" label="采集时间" min-width="150"></el-table-column>
+      <el-table-column prop="addtime" align="center" label="采集时间" min-width="150"></el-table-column>
       <!-- <el-table-column prop="lowestPrice" align="center" label="价格" min-width="110"></el-table-column> -->
       <!-- <el-table-column prop="lowestPriceChange" align="center" label="价格变化" min-width="110"></el-table-column>
 
@@ -230,8 +230,8 @@ export default {
       this.listLoading = true;
       let t = this, o = t.condition;
       if (t.time && t.time.length) {
-        o["startFlightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
-        o["endFlightDate"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
+        o["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd");
+        o["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd");
       }
       if (t.grabtime && t.grabtime.length) {
         o["grabDateStart"] = formatDate(t["grabtime"][0], "yyyy-MM-dd")+" 00:00:00";
@@ -255,17 +255,51 @@ export default {
           this.$message({ message: "获取列表失败", type: "error" });
         });
     },
-
     outElsx() {
+      if (!this.validate()) {
+        return;
+      }
       this.downloadLoading = true;
+      let params={};
+      let t = this, o = t.condition;
+      if (t.time && t.time.length) {
+        params["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd");
+        params["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd");
+      }
+      if (t.grabtime && t.grabtime.length) {
+        params["grabDateStart"] = formatDate(t["grabtime"][0], "yyyy-MM-dd")+" 00:00:00";
+        params["grabDateEnd"] = formatDate(t["grabtime"][1], "yyyy-MM-dd")+" 23:59:59";
+      }
+      params.dep=o.dep;
+      params.arr=o.arr;
+      params.flightNO=o.flightNO;
+      params.pageIndex=1;
+      params.pageSize=50000;
+      CrowRate(params)
+        .then(response => {
+          if (response.data.code == "0") {
+            let datas = response.data.data;
+            this.exportData(datas);
+          } else {
+            this.$message({ message: "获取列表失败", type: "error" });
+          }
+          this.downloadLoading = false;
+        })
+        .catch(err => {
+          this.downloadLoading = false;
+          console.log(err);
+          this.$message({ message: "获取列表失败", type: "error" });
+        });
+    },
+    exportData(datas) {
       let table = [];
-      this.tableData.forEach(element => {
-        element.aim = element.dep + "-" + element.arr;
-        if (element.flightDate) {
-          element.flightDate = this.dateFormat(element.flightDate);
+      datas.forEach(element => {
+        element.aim = element.ori + "-" + element.arrival;
+        if (element.tongjiDate) {
+          element.tongjiDate = this.dateFormat(element.tongjiDate);
         }
-        if (element.depTime) {
-          element.depTime = this.timeFormat(element.depTime);
+        if (element.oritime) {
+          element.oritime = this.timeFormat(element.oritime);
         }
         table.push(element);
       });
@@ -276,23 +310,17 @@ export default {
           "起飞时间",
           "航班号",
           "布局",
-          "价格",
-          "价格变化",
           "客座率",
-          "上客速递",
-          "入库日期"
+          "采集时间"
         ];
         const filterVal = [
-          "flightDate",
+          "tongjiDate",
           "aim",
-          "depTime",
+          "oritime",
           "flightNo",
           "layout",
-          "lowestPrice",
-          "lowestPriceChange",
-          "crowRate",
-          "passengerChange",
-          "addTime"
+          "kezuoRate",
+          "addtime"
         ];
         const list = table;
         const data = this.formatJson(filterVal, list);

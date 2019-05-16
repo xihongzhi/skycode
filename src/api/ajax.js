@@ -71,7 +71,7 @@ export function RepFlightflyIncomeDetail(data) {
   //竞飞航班上客速度报表导出
   export function RepCompetingFlightsExcel(query) {
     return request({
-      url: '/api/RepCompetingFlights/excel',
+      url: '/api/RepCompetingFlights/excel2',
       method: 'get',
       params: query
     })
@@ -87,7 +87,7 @@ export function RepFlightflyIncomeDetail(data) {
     //未来航班上客速度报表导出
   export function RepFutureFlightSellExcel(query) {
     return request({
-      url: '/api/RepFutureFlightSell/excel',
+      url: '/api/RepFutureFlightSell/excel1',
       method: 'get',
       params: query
     })
