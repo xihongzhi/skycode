@@ -590,7 +590,7 @@ export default {
           header,
           merges,
           data,
-          filename: "未来航班上客速度"
+          filename: new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate()+"未来航班上客速度"
         });
         this.downloadLoading = false;
       });

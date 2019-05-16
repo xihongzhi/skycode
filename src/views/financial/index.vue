@@ -337,7 +337,7 @@ export default {
               excel.export_json_to_excel({
                 header: tHeader,
                 data,
-                filename: "未来航班销售监控"
+                filename:new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate()+"未来航班销售监控"
                 // autoWidth: this.autoWidth,
                 // bookType: this.bookType
               });

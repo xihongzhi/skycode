@@ -392,7 +392,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "承运航班收入数据"
+          filename: new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate()+"承运航班收入数据"
         });
         this.downloadLoading = false;
       });

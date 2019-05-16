@@ -327,7 +327,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "航班OTA价格查询"
+          filename: new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate()+"航班OTA价格查询"
         });
         this.downloadLoading = false;
       });
