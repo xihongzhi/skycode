@@ -1,4 +1,4 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
+import { loginByUsername, logout, getUserInfo,modifyPwd } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -120,6 +120,19 @@ const user = {
         removeToken()
         resolve()
       })
+    },
+    ModifyPwd({commit,state},password){
+       return new Promise(resolve=>{
+        modifyPwd(state.name,password.password).then(response=>{
+          if (response.data.code == "0") {
+            commit('SET_TOKEN', '')
+            removeToken()
+            resolve()
+          }
+        }).catch(error => {
+          reject(error)
+        })
+       })
     },
 
     // 动态修改权限

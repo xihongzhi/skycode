@@ -68,6 +68,17 @@ export function RepFlightflyIncomeDetail(data) {
       data
     })
   }
+  export function loginBy(username, password) {
+    const data = {
+      username,
+      password
+    }
+    return request({
+      url: 'api/User/login',
+      method: 'post',
+      data
+    })
+  }
   //竞飞航班上客速度报表导出
   export function RepCompetingFlightsExcel(query) {
     return request({
@@ -76,6 +87,7 @@ export function RepFlightflyIncomeDetail(data) {
       params: query
     })
   }
+
     //-1天承运航班收入导出
     export function RepFlightflyIncomeExcel(query) {
       return request({
@@ -92,3 +104,4 @@ export function RepFlightflyIncomeDetail(data) {
       params: query
     })
   }
+

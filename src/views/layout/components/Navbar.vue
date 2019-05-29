@@ -43,13 +43,29 @@
               {{ $t('navbar.github') }}
             </el-dropdown-item>
           </a> -->
+          <!-- <el-dropdown-item divided>
+            <span style="display:block;" @click="modifyPwd">修改密码</span>
+          </el-dropdown-item> -->
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+ 
+ 
+     <el-dialog title="修改密码" :visible.sync="showDialog" width="500px">
+      <el-form :model="pwdForm" label-width="80px" label-position="left">
+        <el-form-item label="新密码">
+          <el-input v-model="pwdForm.password" placeholder="" />
+        </el-form-item>
+      </el-form>
+      <div style="text-align:right;">
+        <el-button type="primary" @click="confirmRole">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
+  
 </template>
 
 <script>
@@ -74,6 +90,14 @@ export default {
     ThemePicker,
     Search
   },
+  data(){
+    return{
+      showDialog:false,
+       pwdForm: {
+        password: ''
+      },
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
@@ -90,6 +114,15 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
+    },
+    modifyPwd(){
+      this.showDialog=true;
+    },
+    confirmRole(){
+      this.$store.dispatch('ModifyPwd',this.pwdForm).then(()=>{
+        location.reload()
+      })
+      thi.showDialog=false;
     }
   }
 }

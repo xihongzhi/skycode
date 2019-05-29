@@ -116,18 +116,18 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/financial',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/financial/index'),
-        name: '未来航班销售监控',
-        meta: { title: '未来航班销售监控', icon: 'guide' }
-      }
-    ]
-  },
+  // {
+  //   path: '/financial',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/financial/index'),
+  //       name: '未来航班销售监控',
+  //       meta: { title: '未来航班销售监控', icon: 'guide' }
+  //     }
+  //   ]
+  // },
   {
     path: '/lowestprice',
     component: Layout,

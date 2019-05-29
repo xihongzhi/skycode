@@ -47,7 +47,7 @@
       <el-table-column fixed align="center" label="航段" min-width="100">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="航班日期" min-width="80">
+      <el-table-column fixed align="center" label="航班日期" min-width="90">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
       <el-table-column fixed align="center" label="起飞时间" min-width="80">
@@ -64,7 +64,9 @@
             </template> 
         </el-table-column>
         <el-table-column fixed prop="passagerNumber" align="center" label="人数" min-width="60"></el-table-column>
-        <el-table-column fixed prop="grabCrowRateTime" align="center" label="采集时间" min-width="95"></el-table-column>
+        <el-table-column fixed align="center" label="采集时间" min-width="95">
+          <template slot-scope="scope">{{timeFormat(scope.row.grabCrowRateTime)}}</template>
+        </el-table-column>
       </el-table-column>
       <el-table-column fixed label="CTRIP" align="center"  min-width="245" >
       <!-- <el-table-column fixed label="CTRIP" align="center"  min-width="310" > -->
@@ -74,8 +76,9 @@
             </template> 
         </el-table-column>
         <el-table-column  fixed prop="lowestPriceChange" align="center" label="价格变化" min-width="80"></el-table-column>
-         <el-table-column fixed prop="grabLowestPriceTime" align="center" label="采集时间" min-width="95"></el-table-column>
-        <!-- <el-table-column fixed prop="grabLowestPriceTime" align="center" label="采集时间" min-width="160"></el-table-column> -->
+         <el-table-column fixed align="center" label="采集时间" min-width="95">
+           <template slot-scope="scope">{{timeFormat(scope.row.grabLowestPriceTime)}}</template>
+         </el-table-column>
       </el-table-column>
       <el-table-column align="center" label="上客速度">
         <el-table-column prop="d0" align="center" label="0" min-width="60"></el-table-column>
@@ -478,7 +481,6 @@ export default {
       if (t.time && t.time.length) {
         params["flightDate"] = formatDate(t["time"][0], "yyyy-MM-dd")+" 00:00:00";
         params["flightDateEnd"] = formatDate(t["time"][1], "yyyy-MM-dd")+" 23:59:59";
-        
       }
    
       params.dep=o.dep;
@@ -556,9 +558,7 @@ export default {
           "5",
           "6",
           "7",
-          "7+"
-         
-          
+          "7+" 
         ];
         const filterVal = [
           "aim",

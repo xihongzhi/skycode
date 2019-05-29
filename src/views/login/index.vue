@@ -60,13 +60,13 @@
       </div> -->
     </el-form>
 
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
+    <!-- <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
       <br>
       <br>
       <br>
       <social-sign />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -96,7 +96,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '1111111'
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -104,7 +104,7 @@ export default {
       },
       passwordType: 'password',
       loading: false,
-      showDialog: false,
+      // showDialog: false,
       redirect: undefined
     }
   },
@@ -146,7 +146,7 @@ export default {
         }
       })
     },
-    afterQRScan() {
+    // afterQRScan() {
       // const hash = window.location.hash.slice(1)
       // const hashObj = getQueryObject(hash)
       // const originUrl = window.location.origin
@@ -163,7 +163,7 @@ export default {
       //     this.$router.push({ path: '/' })
       //   })
       // }
-    }
+    // }
   }
 }
 </script>

@@ -133,7 +133,7 @@
 import Pagination from "@/components/Pagination";
 import { deepClone } from "@/utils";
 import { formatDate } from '@/utils/datefarmate'
-import { RepFlightflyIncome, RepFlightflyIncomeDetail,RepFlightflyIncomeExcel } from "@/api/ajax.js";
+import { RepFlightflyIncome, RepFlightflyIncomeDetail,RepFlightflyIncomeExcel,loginBy } from "@/api/ajax.js";
 export default {
   components: {
     Pagination
@@ -304,6 +304,16 @@ export default {
         });
     },
      outElsx() {
+      //  loginBy("admin","123456").then(response=>{
+      //    debugger;
+      //     if (response.data.code == "0") {}
+      //   }
+      //  )
+      // .catch(err => {
+      //     console.log(err);
+      //     this.$message({ message: "获取列表失败", type: "error" });
+      //   });
+        debugger;
       if (!this.validate()) {
         return;
       }
