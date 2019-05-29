@@ -5,6 +5,8 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 
+import { asyncRoutes, constantRoutes } from '@/router'
+
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 // permission judge function
@@ -20,7 +22,7 @@ router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   if (getToken()) {
     // determine if there has token
-
+debugger;
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })
@@ -33,6 +35,7 @@ router.beforeEach((to, from, next) => {
           .then(res => {
             // 拉取user_info
             const roles = res.data.roles // note: roles must be a object array! such as: [{id: '1', name: 'editor'}, {id: '2', name: 'developer'}]
+            debugger;
             store.dispatch('GenerateRoutes', { roles }).then(accessRoutes => {
               // 根据roles权限生成可访问的路由表
               router.addRoutes(accessRoutes) // 动态添加可访问路由表

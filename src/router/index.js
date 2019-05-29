@@ -234,51 +234,6 @@ export const asyncRoutes = [
   // treeTableRouter,
 
   // {
-  //   path: '/example',
-  //   component: Layout,
-  //   redirect: '/example/list',
-  //   name: 'Example',
-  //   meta: {
-  //     title: 'example',
-  //     icon: 'example'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'create',
-  //       component: () => import('@/views/example/create'),
-  //       name: 'CreateArticle',
-  //       meta: { title: 'createArticle', icon: 'edit' }
-  //     },
-  //     {
-  //       path: 'edit/:id(\\d+)',
-  //       component: () => import('@/views/example/edit'),
-  //       name: 'EditArticle',
-  //       meta: { title: 'editArticle', noCache: true },
-  //       hidden: true
-  //     },
-  //     {
-  //       path: 'list',
-  //       component: () => import('@/views/example/list'),
-  //       name: 'ArticleList',
-  //       meta: { title: 'articleList', icon: 'list' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/tab',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/tab/index'),
-  //       name: 'Tab',
-  //       meta: { title: 'tab', icon: 'tab' }
-  //     }
-  //   ]
-  // },
-
-  // {
   //   path: '/error',
   //   component: Layout,
   //   redirect: 'noredirect',
@@ -304,85 +259,6 @@ export const asyncRoutes = [
   // },
 
   // {
-  //   path: '/error-log',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   children: [
-  //     {
-  //       path: 'log',
-  //       component: () => import('@/views/errorLog/index'),
-  //       name: 'ErrorLog',
-  //       meta: { title: 'errorLog', icon: 'bug' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/excel',
-  //   component: Layout,
-  //   redirect: '/excel/export-excel',
-  //   name: 'Excel',
-  //   meta: {
-  //     title: 'excel',
-  //     icon: 'excel'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'export-excel',
-  //       component: () => import('@/views/excel/exportExcel'),
-  //       name: 'ExportExcel',
-  //       meta: { title: 'exportExcel' }
-  //     },
-  //     {
-  //       path: 'export-selected-excel',
-  //       component: () => import('@/views/excel/selectExcel'),
-  //       name: 'SelectExcel',
-  //       meta: { title: 'selectExcel' }
-  //     },
-  //     {
-  //       path: 'export-merge-header',
-  //       component: () => import('@/views/excel/mergeHeader'),
-  //       name: 'MergeHeader',
-  //       meta: { title: 'mergeHeader' }
-  //     },
-  //     {
-  //       path: 'upload-excel',
-  //       component: () => import('@/views/excel/uploadExcel'),
-  //       name: 'UploadExcel',
-  //       meta: { title: 'uploadExcel' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/theme',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/theme/index'),
-  //       name: 'Theme',
-  //       meta: { title: 'theme', icon: 'theme' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/clipboard',
-  //   component: Layout,
-  //   redirect: 'noredirect',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/clipboard/index'),
-  //       name: 'ClipboardDemo',
-  //       meta: { title: 'clipboardDemo', icon: 'clipboard' }
-  //     }
-  //   ]
-  // },
-
-  // {
   //   path: '/i18n',
   //   component: Layout,
   //   children: [
@@ -395,16 +271,7 @@ export const asyncRoutes = [
   //   ]
   // },
 
-  // {
-  //   path: 'external-link',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'https://github.com/PanJiaChen/vue-element-admin',
-  //       meta: { title: 'externalLink', icon: 'link' }
-  //     }
-  //   ]
-  // },
+
 
   { path: '*', redirect: '/404', hidden: true }
 ]

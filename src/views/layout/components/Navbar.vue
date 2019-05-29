@@ -33,21 +33,21 @@
           <i class="el-icon-caret-bottom" />
         </div> -->
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-          </router-link>
+          </router-link> -->
           <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>
               {{ $t('navbar.github') }}
             </el-dropdown-item>
           </a> -->
-          <!-- <el-dropdown-item divided>
+          <el-dropdown-item >
             <span style="display:block;" @click="modifyPwd">修改密码</span>
-          </el-dropdown-item> -->
+          </el-dropdown-item>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
+            <span style="display:block;" @click="logout">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -78,6 +78,7 @@ import SizeSelect from '@/components/SizeSelect'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
 import Search from '@/components/HeaderSearch'
+import {ModifyPwd} from "@/api/ajax.js";
 
 export default {
   components: {
@@ -122,7 +123,16 @@ export default {
       this.$store.dispatch('ModifyPwd',this.pwdForm).then(()=>{
         location.reload()
       })
-      thi.showDialog=false;
+      // ModifyPwd(window.localStorage.getItem("user"),this.pwdForm.password)
+      //   .then(response => {
+      //      this.$message({ message: "密码修改成功", type: "info" });
+      //      location.reload()
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //     this.$message({ message: "密码修改失败", type: "error" });
+      //   });
+      this.showDialog=false;
     }
   }
 }

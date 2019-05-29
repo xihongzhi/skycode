@@ -5,22 +5,23 @@ export function loginByUsername(username, password) {
     username,
     password
   }
-  return request({
-    url: '/login/login',
-    method: 'post',
-    data
-  })
   // return request({
-  //   url: 'api/User/login',
+  //   url: '/login/login',
   //   method: 'post',
   //   data
   // })
+  return request({
+    url: 'api/User/login',
+    method: 'post',
+    data
+  })
 }
 export function modifyPwd(username,password){
   const data = {
     username,
     password
   }
+  debugger
   return request({
     url:'/api/User/UpdatePassword',
     method:'post',

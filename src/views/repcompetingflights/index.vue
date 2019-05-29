@@ -57,10 +57,10 @@
       <el-table-column fixed align="center" label="布局" min-width="60">
          <template slot-scope="scope">{{scope.row.layout==0?'-':scope.row.layout}}</template> 
       </el-table-column>
-      <el-table-column fixed label="销售数" align="center" min-width="245" >
-      <el-table-column  fixed align="center" label="客座率" min-width="80">
+      <el-table-column fixed label="销售数" align="center" min-width="255" >
+      <el-table-column  fixed align="center" label="客座率(%)" min-width="90">
            <template slot-scope="scope">
-             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate==null?'':scope.row.crowRate.toFixed(3)}}</el-button>
+             <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate==null?'':(scope.row.crowRate*100).toFixed(1)}}</el-button>
             </template> 
         </el-table-column>
         <el-table-column fixed prop="passagerNumber" align="center" label="人数" min-width="60"></el-table-column>

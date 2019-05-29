@@ -104,4 +104,15 @@ export function RepFlightflyIncomeDetail(data) {
       params: query
     })
   }
-
+  export function ModifyPwd(username,password){
+    const data = {
+      username,
+      password
+    }
+    debugger
+    return request({
+      url:'/api/User/UpdatePassword',
+      method:'post',
+      data
+    })
+  }
