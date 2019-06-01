@@ -50,7 +50,6 @@ const user = {
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
           const data = response.data
-          debugger;
           commit('SET_TOKEN', data.token)
           setToken(response.data.token)
           window.localStorage.setItem("user",username)
@@ -64,7 +63,6 @@ const user = {
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        debugger;
         getUserInfo(state.token).then(response => {
           // 由于mockjs 不支持自定义状态码只能这样hack
           if (!response.data) {

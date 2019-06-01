@@ -120,19 +120,21 @@ export default {
       this.showDialog=true;
     },
     confirmRole(){
-      this.$store.dispatch('ModifyPwd',this.pwdForm).then(()=>{
-        location.reload()
-      })
-      // ModifyPwd(window.localStorage.getItem("user"),this.pwdForm.password)
-      //   .then(response => {
-      //      this.$message({ message: "密码修改成功", type: "info" });
-      //      location.reload()
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //     this.$message({ message: "密码修改失败", type: "error" });
-      //   });
-      this.showDialog=false;
+      if(this.pwdForm.password){
+        this.$store.dispatch('ModifyPwd',this.pwdForm).then(()=>{
+          location.reload()
+        })
+        // ModifyPwd(window.localStorage.getItem("user"),this.pwdForm.password)
+        //   .then(response => {
+        //      this.$message({ message: "密码修改成功", type: "info" });
+        //      location.reload()
+        //   })
+        //   .catch(err => {
+        //     console.log(err);
+        //     this.$message({ message: "密码修改失败", type: "error" });
+        //   });
+        this.showDialog=false;
+      }
     }
   }
 }

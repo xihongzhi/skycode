@@ -152,6 +152,18 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/yyhs',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/yyhs/index'),
+        name: '实时客座率查询',
+        meta: { title: '实时客座率查询', icon: 'documentation' }
+      }
+    ]
+  },
   // {
   //   path: '/repflyincome',
   //   component: Layout,

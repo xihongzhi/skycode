@@ -55,7 +55,7 @@
         <el-table-column fixed label="旅行日期" align="center" min-width="100">
           <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
         </el-table-column>
-        <el-table-column fixed align="center" label="起飞时间" min-width="80">
+        <el-table-column fixed align="center" sortable label="起飞时间" min-width="105" :sort-method="sortByDate">
           <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
         </el-table-column>
         <el-table-column prop="flightstyle" align="center" label="机型" min-width="90"></el-table-column>
@@ -64,7 +64,7 @@
         <el-table-column prop="passagerCount" align="center" label="乘客人数" min-width="80"></el-table-column>
         <el-table-column prop="layoutNumber" align="center" label="布局数" min-width="70"></el-table-column>
         <el-table-column prop="flightIncome" align="center" label="航班收入" min-width="80"></el-table-column>
-        <el-table-column prop="crowdRate" align="center" label="客座率" min-width="70"></el-table-column>
+        <el-table-column prop="crowdRate" align="center" sortable label="客座率" min-width="90"></el-table-column>
         <el-table-column prop="everyTimeIncome" align="center" label="小时收入" min-width="100"></el-table-column>
         <el-table-column prop="everyPassagerDistanceIncome" align="center" label="客公里收入" min-width="100"></el-table-column>
         <el-table-column prop="everyLayoutDistanceIncome" align="center" label="座公里收入" min-width="100"></el-table-column>
@@ -210,6 +210,12 @@ export default {
       let temp=this.condition.dep;
       this.condition.dep=this.condition.arr;
       this.condition.arr=temp;
+    },
+    sortByDate(obj1, obj2){
+      let val1 = obj1.depTime
+      let val2 = obj2.depTime
+      return val1 - val2
+
     },
     dataSearch(){
       debugger;

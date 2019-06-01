@@ -92,11 +92,11 @@ export default {
       //}
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('密码长度不能小于6位'))
-      } else {
+      // if (value.length < 6) {
+      //   callback(new Error('密码长度不能小于6位'))
+      // } else {
         callback()
-      }
+      // }
     }
     return {
       loginForm: {

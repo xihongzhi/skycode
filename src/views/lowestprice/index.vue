@@ -61,13 +61,18 @@
       <el-table-column fixed align="center" label="航段" min-width="130">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="起飞时间" min-width="110">
+      <el-table-column fixed align="center" label="起飞时间" sortable min-width="110" :sort-method="sortByDate">
         <template slot-scope="scope">{{timeFormat(scope.row.deptime)}}</template>
       </el-table-column>
 
       <el-table-column fixed prop="flightNo" align="center" label="航班号" min-width="110"></el-table-column>
       <!-- <el-table-column fixed prop="layout" align="center" label="布局" min-width="110"></el-table-column> -->
-      <el-table-column prop="price" align="center" label="价格" min-width="110"></el-table-column>
+      <el-table-column prop="price" align="center" label="价格" sortable min-width="110"></el-table-column>
+      <el-table-column align="center" label="经停" min-width="70">
+         <template slot-scope="scope">
+             <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.stopnum}}</el-button>
+            </template> 
+      </el-table-column>
       <el-table-column prop="grabTime" align="center" label="采集时间" min-width="150"></el-table-column>
 
       <!-- <el-table-column prop="lowestPriceChange" align="center" label="价格变化" min-width="110"></el-table-column>
@@ -154,6 +159,11 @@ export default {
       m = minutes;
       }
       return h + ":" + m;
+    },
+    sortByDate(obj1, obj2){
+      let val1 = obj1.deptime
+      let val2 = obj2.deptime
+      return val1 - val2
     },
     getTrade(){
       let temp=this.condition.dep;

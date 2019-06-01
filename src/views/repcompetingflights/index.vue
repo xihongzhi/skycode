@@ -41,6 +41,7 @@
       empty-text
       height="435px"
       style="width: 100%"
+      :default-sort = "{prop: 'depTime', order: 'descending'}"
       :row-style="rowClass"
       :cell-style="cellClass"
     >
@@ -50,15 +51,18 @@
       <el-table-column fixed align="center" label="航班日期" min-width="90">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="起飞时间" min-width="80">
+      <el-table-column fixed align="center" label="起飞时间" sortable min-width="110" :sort-method="sortByDate">
         <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
       </el-table-column>
       <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
       <el-table-column fixed align="center" label="布局" min-width="60">
-         <template slot-scope="scope">{{scope.row.layout==0?'-':scope.row.layout}}</template> 
+          <template slot-scope="scope">
+             <el-button @click="handleLayoutClick(scope)" type="text" size="small">{{scope.row.layout==0?'-':scope.row.layout}}</el-button>
+            </template>
+         <!-- <template slot-scope="scope">{{scope.row.layout==0?'-':scope.row.layout}}</template>  -->
       </el-table-column>
-      <el-table-column fixed label="销售数" align="center" min-width="255" >
-      <el-table-column  fixed align="center" label="客座率(%)" min-width="90">
+      <el-table-column fixed label="销售数" align="center" min-width="275" >
+      <el-table-column  fixed align="center" label="客座率(%)" sortable min-width="110" :sort-method="sortByCrowRate">
            <template slot-scope="scope">
              <el-button @click="handleClickgrapResult(scope)" type="text" size="small">{{scope.row.crowRate==null?'':(scope.row.crowRate*100).toFixed(1)}}</el-button>
             </template> 
@@ -68,14 +72,14 @@
           <template slot-scope="scope">{{timeFormat(scope.row.grabCrowRateTime)}}</template>
         </el-table-column>
       </el-table-column>
-      <el-table-column fixed label="CTRIP" align="center"  min-width="245" >
+      <el-table-column fixed label="CTRIP" align="center"  min-width="270" >
       <!-- <el-table-column fixed label="CTRIP" align="center"  min-width="310" > -->
         <el-table-column fixed align="center" label="最低价" min-width="80">
            <template slot-scope="scope">
              <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.lowestPrice}}</el-button>
             </template> 
         </el-table-column>
-        <el-table-column  fixed prop="lowestPriceChange" align="center" label="价格变化" min-width="80"></el-table-column>
+        <el-table-column  fixed prop="lowestPriceChange" align="center" label="价格变化" sortable min-width="105"></el-table-column>
          <el-table-column fixed align="center" label="采集时间" min-width="95">
            <template slot-scope="scope">{{timeFormat(scope.row.grabLowestPriceTime)}}</template>
          </el-table-column>
@@ -92,8 +96,6 @@
         <el-table-column prop="dOut" align="center" label="7+" min-width="60"></el-table-column>
       </el-table-column>
       <!-- <el-table-column :label="this.condition.flightDate" align="center"> -->
-
-     
         <div slot="empty">
           <p>
             <label/>
@@ -109,7 +111,16 @@
         @pagination="getList"
       />
     </div>
-
+  <el-dialog title="修改布局数" :visible.sync="showDialog" width="500px">
+        <el-form :model="layoutForm" label-width="80px" label-position="left">
+          <el-form-item label="布局数">
+            <el-input v-model="layoutForm.layout" placeholder="" />
+          </el-form-item>
+        </el-form>
+        <div style="text-align:right;">
+          <el-button type="primary" @click="confirmLayout">确定</el-button>
+        </div>
+      </el-dialog>
     <el-dialog :visible.sync="dialogVisible" title="最低价采集日志">
       <div class="table-responsive">
         <el-table
@@ -178,7 +189,7 @@
 
 <script>
 import Pagination from "@/components/Pagination";
-import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail,RepCompetingFlightsExcel } from "@/api/ajax.js";
+import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail,RepCompetingFlightsExcel,UpdataLayout } from "@/api/ajax.js";
 import { parseTime,deepClone } from "@/utils";
 import { formatDate } from '@/utils/datefarmate'
 export default {
@@ -222,12 +233,18 @@ export default {
        grabResulttotal:0,
        grabResultVisible:false,
        grabResultLoading:false,
-       grabResultData:null
+       grabResultData:null,
+       showDialog:false,
+       layoutForm: {
+        dep:'',
+        arr:'',
+        flightNo:'',
+        flightDate:'',
+        layout:''
+      },
     };
   },
   mounted() {
-  //  this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 50;
-   // this.getList();
   },
   methods: {
      rowClass: function (row, index) {
@@ -275,14 +292,35 @@ export default {
        this.detailcondition.arr=row.arr;
        this.getDetailList();
     },
+    //打开修改布局数
+    handleLayoutClick(scope){
+      let row=deepClone(scope.row);
+      if(row.layout==0){
+        this.showDialog=true;
+        this.layoutForm.dep=row.dep;
+        this.layoutForm.arr=row.arr;
+        this.layoutForm.flightNo=row.flightNO;
+        this.layoutForm.flightDate=row.flightDate;
+      }
+    },
+    confirmLayout(){
+      UpdataLayout(this.layoutForm)
+           .then(response => {
+              this.$message({ message: "布局修改成功", type: "info" });
+              this.getList();
+           })
+           .catch(err => {
+             console.log(err);
+             this.$message({ message: "布局修改失败", type: "error" });
+           });
+        this.showDialog=false;
+    },
        //携程最低价当天抓取明细
     getDetailList() {
       let t = this;
-      debugger;
        this.detaillistLoading = true;
       LowestPriceSameDayDetail(t.detailcondition)
         .then(response => {
-          debugger;
           if (response.data.code == "0") {
             this.detailtableData = response.data.data;
             this.detailtotal = response.data.count;
@@ -332,6 +370,16 @@ export default {
            this.grabResultLoading = false;
           this.$message({ message: "获取列表失败", type: "error" });
         });
+    },
+    sortByDate(obj1, obj2){
+      let val1 = obj1.depTime
+      let val2 = obj2.depTime
+      return val1 - val2
+    },
+    sortByCrowRate(obj1, obj2){
+      let val1 = obj1.crowRate
+      let val2 = obj2.crowRate
+      return val1 - val2
     },
     getTrade(){
       let temp=this.condition.dep;

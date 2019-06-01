@@ -34,6 +34,15 @@ export function CrowRate(data) {
   })
 }
 
+        //修改布局数
+export function UpdataLayout(data) {
+  debugger;
+  return request({
+   url: '/api/FlighSY/UpdataLayout',
+   method: 'post',
+  data
+  })
+}
 
 
   //客座率当天抓取明细
@@ -109,7 +118,6 @@ export function RepFlightflyIncomeDetail(data) {
       username,
       password
     }
-    debugger
     return request({
       url:'/api/User/UpdatePassword',
       method:'post',
