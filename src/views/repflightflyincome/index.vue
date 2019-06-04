@@ -52,10 +52,10 @@
         <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
         <el-table-column fixed prop="dep" align="center" label="始发" min-width="60"></el-table-column>
         <el-table-column fixed prop="arr" align="center" label="目的" min-width="60"></el-table-column>
-        <el-table-column fixed label="旅行日期" align="center" min-width="100">
+        <el-table-column fixed label="旅行日期" sortable align="center" min-width="110" :sort-method="sortByDate">
           <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
         </el-table-column>
-        <el-table-column fixed align="center" sortable label="起飞时间" min-width="105" :sort-method="sortByDate">
+        <el-table-column fixed align="center"  label="起飞时间" min-width="100" >
           <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
         </el-table-column>
         <el-table-column prop="flightstyle" align="center" label="机型" min-width="90"></el-table-column>
@@ -212,8 +212,8 @@ export default {
       this.condition.arr=temp;
     },
     sortByDate(obj1, obj2){
-      let val1 = obj1.depTime
-      let val2 = obj2.depTime
+      let val1 = obj1.flightDate
+      let val2 = obj2.flightDate
       return val1 - val2
 
     },

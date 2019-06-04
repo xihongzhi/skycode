@@ -55,13 +55,13 @@
       
     >
       <!-- <el-table-column fixed prop="futureID" align="center" label="序号" width="100"></el-table-column> -->
-      <el-table-column fixed align="center" label="日期" min-width="110">
+      <el-table-column fixed align="center" sortable label="日期" min-width="110" :sort-method="sortByDate">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
       <el-table-column fixed align="center" label="航段" min-width="130">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="起飞时间" sortable min-width="110" :sort-method="sortByDate">
+      <el-table-column fixed align="center" label="起飞时间"  min-width="110" >
         <template slot-scope="scope">{{timeFormat(scope.row.deptime)}}</template>
       </el-table-column>
 
@@ -70,8 +70,10 @@
       <el-table-column prop="price" align="center" label="价格" sortable min-width="110"></el-table-column>
       <el-table-column align="center" label="经停" min-width="70">
          <template slot-scope="scope">
-             <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.stopnum}}</el-button>
-            </template> 
+            <el-popover ref="popover3" placement="right" width="200" trigger="click" :content="stopnumData">
+            <span slot="reference" style="color:#409EFF" @click="handleClick(scope.$index, scope.row)">{{ scope.row.stopover==true?'有':'无' }}</span>
+          </el-popover>
+          </template> 
       </el-table-column>
       <el-table-column prop="grabTime" align="center" label="采集时间" min-width="150"></el-table-column>
 
@@ -100,6 +102,7 @@
 import Pagination from "@/components/Pagination";
 import { LowestPrice  } from "@/api/ajax.js";
 import { formatDate} from '@/utils/datefarmate'
+import { parseTime,deepClone } from "@/utils";
 export default {
   components: {
     Pagination
@@ -118,7 +121,8 @@ export default {
         arr: "",
         flightNO: ""
       },
-      tableData: null
+      tableData: null,
+      stopnumData:''
     };
   },
   mounted() {
@@ -161,8 +165,8 @@ export default {
       return h + ":" + m;
     },
     sortByDate(obj1, obj2){
-      let val1 = obj1.deptime
-      let val2 = obj2.deptime
+      let val1 = obj1.flightDate
+      let val2 = obj2.flightDate
       return val1 - val2
     },
     getTrade(){
@@ -219,7 +223,7 @@ export default {
             return false;
           }
         }
-        this.condition.flightNo;
+        this.condition.flightNO;
       }
        if(this.time){
         var oneTime = new Date().setTime(new Date(this.time[0]).getTime());
@@ -231,7 +235,28 @@ export default {
       }
       return true;
     },
-
+    handleClick(index,rows){
+     let row = deepClone(rows);
+      this.stopnumData='';
+       if(row.stopnum==0)return;
+       let parms={
+         dep:row.dep,
+         arr:row.arr,
+         flightDate:row.flightDate,
+         flightNo:row.flightNo
+       }
+      GetStopLeg(parms).then(response=>{
+        debugger;
+        if(response.status==200){
+          this.stopnumData= response.data;
+          this.visible=true;
+        }
+      }).catch(err => {
+          console.log(err);
+          this.visible=false;
+          this.$message({ message: "获取经停数据失败", type: "error" });
+      });
+    },
     getList() {
       if (!this.validate()) {
         return;

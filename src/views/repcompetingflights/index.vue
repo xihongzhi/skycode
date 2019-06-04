@@ -45,21 +45,28 @@
       :row-style="rowClass"
       :cell-style="cellClass"
     >
-      <el-table-column fixed align="center" label="航段" min-width="100">
+      <el-table-column fixed align="center" label="航段" min-width="92">
         <template slot-scope="scope">{{scope.row.dep}}-{{scope.row.arr}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="航班日期" min-width="90">
+      <el-table-column fixed align="center" label="航班日期" sortable min-width="102" :sort-method="sortByDate">
         <template slot-scope="scope">{{dateFormat(scope.row.flightDate)}}</template>
       </el-table-column>
-      <el-table-column fixed align="center" label="起飞时间" sortable min-width="110" :sort-method="sortByDate">
+      <el-table-column fixed align="center" label="起飞时间"  min-width="80" >
         <template slot-scope="scope">{{timeFormat(scope.row.depTime)}}</template>
       </el-table-column>
-      <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="80"></el-table-column>
+      <el-table-column fixed prop="flightNO" align="center" label="航班号" min-width="76"></el-table-column>
       <el-table-column fixed align="center" label="布局" min-width="60">
           <template slot-scope="scope">
              <el-button @click="handleLayoutClick(scope)" type="text" size="small">{{scope.row.layout==0?'-':scope.row.layout}}</el-button>
             </template>
          <!-- <template slot-scope="scope">{{scope.row.layout==0?'-':scope.row.layout}}</template>  -->
+      </el-table-column>
+      <el-table-column align="center" fixed label="经停" min-width="45">
+         <template slot-scope="scope">
+            <el-popover ref="popover3" placement="right" width="200" trigger="click" :content="stopnumData">
+            <span slot="reference" style="color:#409EFF" @click="handleStopLegClick(scope.$index, scope.row)">{{ scope.row.stopnum=='1'?'有':'无' }}</span>
+          </el-popover>
+          </template> 
       </el-table-column>
       <el-table-column fixed label="销售数" align="center" min-width="275" >
       <el-table-column  fixed align="center" label="客座率(%)" sortable min-width="110" :sort-method="sortByCrowRate">
@@ -72,7 +79,7 @@
           <template slot-scope="scope">{{timeFormat(scope.row.grabCrowRateTime)}}</template>
         </el-table-column>
       </el-table-column>
-      <el-table-column fixed label="CTRIP" align="center"  min-width="270" >
+      <el-table-column fixed label="CTRIP" align="center"  min-width="272" >
       <!-- <el-table-column fixed label="CTRIP" align="center"  min-width="310" > -->
         <el-table-column fixed align="center" label="最低价" min-width="80">
            <template slot-scope="scope">
@@ -189,7 +196,7 @@
 
 <script>
 import Pagination from "@/components/Pagination";
-import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail,RepCompetingFlightsExcel,UpdataLayout } from "@/api/ajax.js";
+import { RepCompetingFlights,CrowRateSameDayDetail,LowestPriceSameDayDetail,RepCompetingFlightsExcel,UpdataLayout,GetStopLeg } from "@/api/ajax.js";
 import { parseTime,deepClone } from "@/utils";
 import { formatDate } from '@/utils/datefarmate'
 export default {
@@ -242,6 +249,7 @@ export default {
         flightDate:'',
         layout:''
       },
+      stopnumData:''
     };
   },
   mounted() {
@@ -280,6 +288,27 @@ export default {
       m = minutes;
       }
       return h + ":" + m;
+    },
+  handleStopLegClick(index,rows){
+     let row = deepClone(rows);
+     debugger;
+      this.stopnumData='';
+       if(row.stopnum==0)return;
+       let parms={
+         dep:row.dep,
+         arr:row.arr,
+         flightDate:row.flightDate,
+         flightNo:row.flightNO
+       }
+      GetStopLeg(parms).then(response=>{
+        debugger;
+        if(response.status==200){
+          this.stopnumData= response.data;
+        }
+      }).catch(err => {
+          console.log(err);
+          this.$message({ message: "获取经停数据失败", type: "error" });
+      });
     },
     //携程最低价当天抓取明细
    handleClick(scope) {    
@@ -372,8 +401,8 @@ export default {
         });
     },
     sortByDate(obj1, obj2){
-      let val1 = obj1.depTime
-      let val2 = obj2.depTime
+      let val1 = obj1.flightDate
+      let val2 = obj2.flightDate
       return val1 - val2
     },
     sortByCrowRate(obj1, obj2){

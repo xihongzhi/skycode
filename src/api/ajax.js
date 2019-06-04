@@ -36,14 +36,21 @@ export function CrowRate(data) {
 
         //修改布局数
 export function UpdataLayout(data) {
-  debugger;
   return request({
    url: '/api/FlighSY/UpdataLayout',
    method: 'post',
   data
   })
 }
-
+        //获得经停段
+ export function GetStopLeg(data) {
+  return request({
+    url: '/api/FlighSY/GetStopLeg',
+    method: 'post',
+    data
+    })
+}
+        
 
   //客座率当天抓取明细
   export function CrowRateSameDayDetail(data) {
