@@ -68,7 +68,11 @@
 
       <el-table-column fixed prop="flightNo" align="center" label="航班号" min-width="110"></el-table-column>
       <el-table-column fixed prop="layout" align="center" label="布局" min-width="110"></el-table-column>
-      <el-table-column prop="kezuoRate" align="center" label="客座率" sortable min-width="110"></el-table-column>
+      <el-table-column align="center" label="客座率" sortable min-width="110" :sort-method="sortByCrowRate">
+        <template slot-scope="scope">
+             <span type="text" size="small">{{scope.row.kezuoRate==null?'':(scope.row.kezuoRate).toFixed(3)}}</span>
+            </template> 
+      </el-table-column>
       <el-table-column align="center" label="经停" min-width="70">
          <template slot-scope="scope">
             <el-popover ref="popover3" placement="right" width="200" trigger="click" :content="stopnumData">
@@ -169,6 +173,11 @@ export default {
     sortByDate(obj1, obj2){
       let val1 = obj1.tongjiDate
       let val2 = obj2.tongjiDate
+      return val1 - val2
+    },
+    sortByCrowRate(obj1, obj2){
+      let val1 = obj1.kezuoRate
+      let val2 = obj2.kezuoRate
       return val1 - val2
     },
     getTrade(){
