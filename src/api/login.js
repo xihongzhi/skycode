@@ -36,6 +36,7 @@ export function logout() {
 }
 
 export function getUserInfo(token) {
+  debugger;
   return request({
     url: '/user/info',
     method: 'get',

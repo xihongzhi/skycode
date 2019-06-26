@@ -9,7 +9,7 @@
 export default {
   data(){
      return {
-       resultUrl:"http://62.234.178.225:8080//yyhs.aspx"
+       resultUrl:"http://62.234.178.225:8080/yypr.aspx"
      }
   }
 }

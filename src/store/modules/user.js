@@ -62,7 +62,9 @@ const user = {
 
     // 获取用户信息
     GetUserInfo({ commit, state }) {
+      debugger;
       return new Promise((resolve, reject) => {
+        debugger;
         getUserInfo(state.token).then(response => {
           // 由于mockjs 不支持自定义状态码只能这样hack
           if (!response.data) {

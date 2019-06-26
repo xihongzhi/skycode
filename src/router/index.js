@@ -152,6 +152,7 @@ export const constantRoutes = [
       }
     ]
   },
+  
   {
     path: '/yyhs',
     component: Layout,
@@ -159,11 +160,35 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/yyhs/index'),
-        name: '实时客座率查询',
-        meta: { title: '实时客座率查询', icon: 'documentation' }
+        name: '实时查询客座率',
+        meta: { title: '实时查询客座率', icon: 'documentation' }
       }
     ]
   },
+  {
+    path: '/yypr',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/yypr/index'),
+        name: '实时查询OTA最低价',
+        meta: { title: '实时查询OTA最低价', icon: 'documentation' }
+      }
+    ]
+  },
+  // {
+  //   path: '/warning',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/warning/index'),
+  //       name: '预警规则维护',
+  //       meta: { title: '预警规则维护', icon: 'documentation' }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/repflyincome',
   //   component: Layout,
