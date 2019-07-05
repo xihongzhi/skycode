@@ -177,18 +177,30 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/warning',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/warning/index'),
-  //       name: '预警规则维护',
-  //       meta: { title: '预警规则维护', icon: 'documentation' }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/ctrips',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/ctrips/index'),
+        name: '携程最低价实时查询',
+        meta: { title: '携程最低价实时查询', icon: 'documentation' }
+      }
+    ]
+  },
+  {
+    path: '/warning',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/warning/index'),
+        name: '预警规则维护',
+        meta: { title: '预警规则维护', icon: 'documentation' }
+      }
+    ]
+  },
   // {
   //   path: '/repflyincome',
   //   component: Layout,

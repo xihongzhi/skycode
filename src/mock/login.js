@@ -26,9 +26,10 @@ export default {
     debugger;
     const { token } = param2Obj(config.url)
     if (userMap[token]) {
-      return userMap[token]
-    } else {
-      return false
+    //   return userMap[token]
+    // } else {
+     // return false
+     return userMap['admin']
     }
   },
   logout: () => 'success'

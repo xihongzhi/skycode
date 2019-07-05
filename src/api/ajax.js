@@ -84,6 +84,16 @@ export function RepFlightflyIncomeDetail(data) {
       data
     })
   }
+  //携程最低价实时查询
+export function RepFlightLowestPrice(data){
+  debugger;
+  return request({
+    url:'/api/FlightLowestPrice/flightlowestprice',
+    method:'post',
+    data
+  })
+}
+
   export function loginBy(username, password) {
     const data = {
       username,

@@ -13,13 +13,28 @@
         </el-row>
         <el-row>
         <label class="postInfo-container-item">比较项:</label>
-         <el-input v-model="condition.flightNO" style="width: 120px;" class="filter-item"/>
+         <el-select v-model="value" placeholder="请选择">
+              <el-option
+                v-for="item in comparisons"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
          <label class="postInfo-container-item">通知微信号:</label>
          <el-input v-model="condition.flightNO" style="width: 120px;" class="filter-item"/>
          <label class="postInfo-container-item">预警编号:</label>
          <el-input v-model="condition.flightNO" style="width: 120px;" class="filter-item"/>
         <label class="postInfo-container-item">状态 :</label>
-         <el-input v-model="condition.flightNO" style="width: 120px;" class="filter-item"/>
+         <el-select v-model="value" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+         <!-- <el-input v-model="condition.flightNO" style="width: 120px;" class="filter-item"/> -->
         <el-button class="filter-item" type="primary"  icon="el-icon-search" @click="getList">查询</el-button>
         <el-button
           :loading="downloadLoading"
@@ -102,7 +117,20 @@
           <el-input v-model="role.name" placeholder="" />
         </el-form-item>
          <el-form-item label="比较项">
-          <el-input v-model="role.name" placeholder="" />
+          <el-select v-model="value" placeholder="请选择">
+              <el-option
+                v-for="item in comparisons"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="比较方式">
+            <template>
+              <el-radio v-model="radio" label="1">大于等于</el-radio>
+              <el-radio v-model="radio" label="2">小于等于</el-radio>
+          </template>
         </el-form-item>
          <el-form-item label="预警阈值">
           <el-input v-model="role.name" placeholder="" />
@@ -111,10 +139,26 @@
           <el-input v-model="role.name" placeholder="" />
         </el-form-item>
          <el-form-item label="航班有效期">
-          <el-input v-model="role.name" placeholder="" />
+            <el-date-picker
+              type="daterange"
+              v-model="time"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :default-time="['00:00:00', '23:59:59']"
+              @change="dataSearch"
+              style="width: 230px;"
+          ></el-date-picker>
+          <el-checkbox v-model="checked"></el-checkbox>
         </el-form-item>
          <el-form-item label="状态">
-          <el-input v-model="role.name" placeholder="" />
+           <el-select v-model="value" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -153,18 +197,44 @@ export default {
         arr: "",
         flightNO: ""
       },
+      radio: '1',
       role: Object.assign({}, defaultRole),
       routes: [],
       rolesList: [],
       dialogVisible: false,
       dialogType: 'new',
       checkStrictly: false,
-
+      checked: false,
       tableData: null,
-      stopnumData:''
+      stopnumData:'',
+
+      options: [{
+          value: '1',
+          label: '启用'
+        }, {
+          value: '2',
+          label: '禁用'
+        }],
+        value: '',
+        comparisons: [{
+          value: '1',
+          label: '客座率(%)'
+        }, {
+          value: '2',
+          label: '最低价(元)'
+        }],
+        value: ''
     };
   },
   mounted() {
+      $(".el-checkbox input").change(() => {
+        console.log('呵呵');
+        if ($(".el-checkbox input[type='checkbox']").is(':checked') == true) {
+          console.log('选中');
+        } else {
+          console.log('没选中');
+        }
+      })
    // this.getList();
   },
   methods: {
